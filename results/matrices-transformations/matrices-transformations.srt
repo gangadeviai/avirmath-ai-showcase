@@ -1,0 +1,659 @@
+1
+00:00:00,330 --> 00:00:03,230
+Inside every neural network, between one layer
+
+2
+00:00:03,091 --> 00:00:05,127
+and the next, sits a matrix.
+
+3
+00:00:05,314 --> 00:00:08,339
+A vector of activations goes in, the matrix moves
+
+4
+00:00:08,200 --> 00:00:10,156
+it, and a new vector comes out.
+
+5
+00:00:10,340 --> 00:00:13,456
+GPT-two is a stack of hundreds of them; the model
+
+6
+00:00:13,317 --> 00:00:14,240
+reading a C.T.
+
+7
+00:00:14,101 --> 00:00:15,808
+scan is a stack of them too.
+
+8
+00:00:15,995 --> 00:00:18,157
+So what does a matrix actually do?
+
+9
+00:00:18,359 --> 00:00:19,861
+Not a table of numbers.
+
+10
+00:00:20,052 --> 00:00:22,543
+A machine that moves all of space at once.
+
+11
+00:00:22,734 --> 00:00:25,407
+Feed it the whole plane, and the whole plane moves,
+
+12
+00:00:25,461 --> 00:00:28,100
+with grid lines staying straight and evenly spaced.
+
+13
+00:00:28,292 --> 00:00:30,158
+And the machine is easy to read.
+
+14
+00:00:30,372 --> 00:00:33,624
+Its first column is where the arrow one, zero lands.
+
+15
+00:00:33,837 --> 00:00:36,658
+Its second column is where zero, one lands.
+
+16
+00:00:36,849 --> 00:00:39,612
+Know those two, and you know where everything goes.
+
+17
+00:00:41,049 --> 00:00:44,733
+Take the matrix with rows two, one, and zero, one.
+
+18
+00:00:44,939 --> 00:00:48,055
+Its columns are two, zero, and one, one.
+
+19
+00:00:48,257 --> 00:00:50,475
+Apply it to the vector one, two.
+
+20
+00:00:50,689 --> 00:00:53,702
+The rule says: one times the first column, plus
+
+21
+00:00:53,564 --> 00:00:55,044
+two times the second column.
+
+22
+00:00:55,208 --> 00:00:58,369
+One times two, zero, is two, zero.
+
+23
+00:00:58,549 --> 00:01:01,449
+Two times one, one, is two, two.
+
+24
+00:01:01,628 --> 00:01:03,551
+Add them: four, two.
+
+25
+00:01:03,739 --> 00:01:05,548
+That is where the vector lands.
+
+26
+00:01:05,750 --> 00:01:08,843
+Watch the grid move with it: the x direction stretches
+
+27
+00:01:08,705 --> 00:01:11,230
+to twice its length, and the y direction leans
+
+28
+00:01:11,091 --> 00:01:11,332
+to the right.
+
+29
+00:01:11,167 --> 00:01:14,010
+The one property that makes all of this work is
+
+30
+00:01:13,872 --> 00:01:14,363
+linearity.
+
+31
+00:01:14,224 --> 00:01:17,419
+The matrix of a sum is the sum of the matrices.
+
+32
+00:01:17,281 --> 00:01:20,056
+Scale the input, and the output scales.
+
+33
+00:01:19,917 --> 00:01:23,374
+That is why the grid lines stay straight, and why
+
+34
+00:01:23,474 --> 00:01:24,658
+the two columns are enough.
+
+35
+00:01:26,682 --> 00:01:28,434
+Now do two moves in a row.
+
+36
+00:01:28,613 --> 00:01:30,376
+First stretch x by two.
+
+37
+00:01:30,586 --> 00:01:32,589
+Then rotate by ninety degrees.
+
+38
+00:01:32,791 --> 00:01:35,282
+There is a single matrix that does both at once,
+
+39
+00:01:35,370 --> 00:01:38,384
+and it is the product: the rotation matrix, times
+
+40
+00:01:38,245 --> 00:01:39,430
+the stretch matrix.
+
+41
+00:01:39,620 --> 00:01:41,964
+Read right to left, like functions.
+
+42
+00:01:42,125 --> 00:01:43,468
+Multiply them out.
+
+43
+00:01:43,682 --> 00:01:47,309
+The rotation is zero, minus one, one, zero.
+
+44
+00:01:47,492 --> 00:01:50,539
+The stretch is two, zero, zero, one.
+
+45
+00:01:50,750 --> 00:01:54,753
+Row times column: zero, minus one; two, zero.
+
+46
+00:01:54,966 --> 00:01:57,764
+That single matrix sends the grid exactly where
+
+47
+00:01:57,625 --> 00:01:58,786
+the two moves did.
+
+48
+00:01:58,958 --> 00:02:01,677
+Swap the order, rotate first and then stretch,
+
+49
+00:02:01,765 --> 00:02:04,801
+and you get a different matrix: zero, minus two;
+
+50
+00:02:04,901 --> 00:02:06,006
+one, zero.
+
+51
+00:02:06,219 --> 00:02:07,722
+The grids do not match.
+
+52
+00:02:07,935 --> 00:02:10,801
+Matrix multiplication does not commute, because
+
+53
+00:02:10,663 --> 00:02:12,870
+doing things in a different order is a different
+
+54
+00:02:12,731 --> 00:02:13,256
+thing.
+
+55
+00:02:13,469 --> 00:02:16,381
+That is why a network's layers cannot be reordered.
+
+56
+00:02:17,818 --> 00:02:20,036
+How much does the machine stretch area?
+
+57
+00:02:20,234 --> 00:02:21,725
+Follow the unit square.
+
+58
+00:02:21,916 --> 00:02:24,668
+Under our matrix it becomes a parallelogram of
+
+59
+00:02:24,530 --> 00:02:25,430
+area two.
+
+60
+00:02:25,643 --> 00:02:28,975
+That number has a formula, a d minus b c, and a
+
+61
+00:02:28,836 --> 00:02:30,407
+name: the determinant.
+
+62
+00:02:30,620 --> 00:02:33,941
+Here, two times one, minus one times zero.
+
+63
+00:02:34,132 --> 00:02:34,691
+Two.
+
+64
+00:02:34,875 --> 00:02:37,616
+If the determinant is zero, the square is squashed
+
+65
+00:02:37,477 --> 00:02:38,695
+flat onto a line.
+
+66
+00:02:38,886 --> 00:02:39,843
+Area gone.
+
+67
+00:02:40,057 --> 00:02:42,514
+And once it is gone, nothing can bring it back:
+
+68
+00:02:42,670 --> 00:02:45,457
+a matrix with determinant zero has no inverse.
+
+69
+00:02:45,659 --> 00:02:48,718
+For any other, the inverse is the machine run backwards,
+
+70
+00:02:48,795 --> 00:02:50,639
+and it returns every point home.
+
+71
+00:02:52,057 --> 00:02:54,536
+Most arrows get turned by a matrix.
+
+72
+00:02:54,723 --> 00:02:55,861
+A few do not.
+
+73
+00:02:56,075 --> 00:02:58,543
+They stay on their own line and only get longer
+
+74
+00:02:58,405 --> 00:02:59,225
+or shorter.
+
+75
+00:02:59,416 --> 00:03:02,191
+Those are the eigenvectors, and the stretch factor
+
+76
+00:03:02,052 --> 00:03:03,281
+is the eigenvalue.
+
+77
+00:03:03,484 --> 00:03:05,907
+A times v equals lambda times v.
+
+78
+00:03:06,083 --> 00:03:09,734
+Take the symmetric matrix two, one, one, two.
+
+79
+00:03:09,913 --> 00:03:13,040
+To find lambda, ask when A minus lambda I squashes
+
+80
+00:03:12,901 --> 00:03:15,449
+space: its determinant must be zero.
+
+81
+00:03:15,627 --> 00:03:19,607
+Two minus lambda, squared, minus one, equals zero.
+
+82
+00:03:19,788 --> 00:03:21,881
+So lambda is three, or one.
+
+83
+00:03:22,080 --> 00:03:25,594
+For three, the direction one, one: the matrix sends
+
+84
+00:03:25,455 --> 00:03:26,854
+it to three, three.
+
+85
+00:03:27,045 --> 00:03:30,343
+For one, the direction one, minus one, which it
+
+86
+00:03:30,205 --> 00:03:31,082
+leaves alone.
+
+87
+00:03:31,292 --> 00:03:33,407
+Here is why this matters for training.
+
+88
+00:03:33,622 --> 00:03:36,169
+The bowl from lesson one, x squared plus three
+
+89
+00:03:36,031 --> 00:03:38,839
+y squared, has a matrix of second derivatives:
+
+90
+00:03:38,974 --> 00:03:41,328
+two, zero, zero, six.
+
+91
+00:03:41,542 --> 00:03:44,453
+Its eigenvalues are the curvatures along the eigenvector
+
+92
+00:03:44,315 --> 00:03:47,373
+directions: two along x, six along y.
+
+93
+00:03:47,587 --> 00:03:49,873
+And the steepest curvature sets the learning-rate
+
+94
+00:03:49,735 --> 00:03:53,362
+limit we found then: two divided by six, one third.
+
+95
+00:03:53,553 --> 00:03:56,305
+The exact same number, from the eigenvalue.
+
+96
+00:03:57,807 --> 00:04:00,696
+Every layer of a neural network is a matrix.
+
+97
+00:04:00,893 --> 00:04:04,225
+The input vector goes in, W times x plus b comes
+
+98
+00:04:04,086 --> 00:04:06,838
+out, and training is gradient descent on the entries
+
+99
+00:04:06,700 --> 00:04:07,441
+of W.
+
+100
+00:04:07,655 --> 00:04:10,895
+In GPT-two, each of the 12 layers holds a matrix
+
+101
+00:04:10,757 --> 00:04:18,441
+of 768 by 3072: 2,359,296 learned numbers in one
+
+102
+00:04:18,541 --> 00:04:21,134
+matrix, and 124 million parameters in all.
+
+103
+00:04:21,292 --> 00:04:23,669
+Attention is a matrix product too.
+
+104
+00:04:23,872 --> 00:04:26,976
+Stack the query vectors as rows of Q, the key vectors
+
+105
+00:04:26,837 --> 00:04:29,976
+as rows of K, and Q times K transpose computes
+
+106
+00:04:29,837 --> 00:04:32,544
+every query-key dot product at once: a thousand
+
+107
+00:04:32,406 --> 00:04:34,908
+tokens give a thousand by thousand grid of scores
+
+108
+00:04:34,769 --> 00:04:35,885
+in one operation.
+
+109
+00:04:36,099 --> 00:04:38,942
+That is why it runs so fast on a graphics processor,
+
+110
+00:04:39,065 --> 00:04:41,509
+and why the 12 heads of each layer can run side
+
+111
+00:04:41,372 --> 00:04:42,146
+by side.
+
+112
+00:04:42,333 --> 00:04:44,483
+And the data itself is a matrix.
+
+113
+00:04:44,674 --> 00:04:45,620
+A chest C.T.
+
+114
+00:04:45,481 --> 00:04:52,938
+slice is 512 by 512 numbers, 262,144 pixel intensities.
+
+115
+00:04:53,140 --> 00:04:55,711
+A convolution slides a small matrix across it,
+
+116
+00:04:55,822 --> 00:04:58,234
+and the library rewrites that as one big matrix
+
+117
+00:04:58,094 --> 00:05:01,154
+product, so the same hardware that trains GPT-two
+
+118
+00:05:01,015 --> 00:05:01,983
+reads the scan.
+
+119
+00:05:03,432 --> 00:05:06,173
+Google ranks web pages with an eigenvector.
+
+120
+00:05:06,382 --> 00:05:09,305
+Build a matrix where each page passes its importance
+
+121
+00:05:09,166 --> 00:05:11,703
+to the pages it links to, add a little damping,
+
+122
+00:05:11,814 --> 00:05:14,123
+and the ranking is the vector that the matrix sends
+
+123
+00:05:13,984 --> 00:05:14,827
+to itself.
+
+124
+00:05:15,030 --> 00:05:17,941
+Apply the matrix again and again, and any starting
+
+125
+00:05:17,802 --> 00:05:19,168
+guess settles onto it.
+
+126
+00:05:19,382 --> 00:05:22,816
+Here, six pages: page three is linked by everyone,
+
+127
+00:05:22,893 --> 00:05:24,521
+and the eigenvector says so.
+
+128
+00:05:25,208 --> 00:05:27,540
+Recommendation is a matrix problem.
+
+129
+00:05:27,723 --> 00:05:31,714
+Netflix's prize dataset had 100.48 million ratings
+
+130
+00:05:31,575 --> 00:05:37,896
+from 480,189 users of 17,770 films: a table of
+
+131
+00:05:37,757 --> 00:05:41,597
+8.5 billion cells with only 1.2 percent filled.
+
+132
+00:05:41,458 --> 00:05:43,847
+The winning idea was to write the giant table as
+
+133
+00:05:43,708 --> 00:05:46,984
+a product of two thin ones, users times hidden
+
+134
+00:05:47,026 --> 00:05:49,006
+tastes, and tastes times films.
+
+135
+00:05:48,867 --> 00:05:52,017
+Any matrix splits this way, into a sum of simple
+
+136
+00:05:52,106 --> 00:05:54,312
+layers, each a column times a row, weighted by
+
+137
+00:05:54,174 --> 00:05:55,153
+a singular value.
+
+138
+00:05:55,333 --> 00:05:57,824
+Keep the biggest few layers and you keep most of
+
+139
+00:05:57,685 --> 00:05:58,518
+the structure.
+
+140
+00:05:58,727 --> 00:06:02,719
+Here is a forty-eight by forty-eight image: 2,304
+
+141
+00:06:02,580 --> 00:06:03,287
+numbers.
+
+142
+00:06:03,477 --> 00:06:06,594
+Six layers rebuild it with 582.
+
+143
+00:06:06,784 --> 00:06:09,730
+The same trick, called LoRA, is how large language
+
+144
+00:06:09,591 --> 00:06:12,116
+models are fine-tuned today: instead of changing
+
+145
+00:06:11,977 --> 00:06:18,821
+a 768 by 768 weight matrix, 589,824 numbers, you
+
+146
+00:06:18,682 --> 00:06:23,642
+learn two thin matrices of rank 8, 12,288 numbers,
+
+147
+00:06:23,765 --> 00:06:25,188
+48 times fewer.
+
+148
+00:06:26,640 --> 00:06:27,245
+So.
+
+149
+00:06:27,442 --> 00:06:30,331
+A matrix moves space; its columns say where the
+
+150
+00:06:30,192 --> 00:06:31,228
+basis lands.
+
+151
+00:06:31,431 --> 00:06:34,672
+Multiplying matrices is composing moves, and order
+
+152
+00:06:34,533 --> 00:06:35,263
+matters.
+
+153
+00:06:35,476 --> 00:06:37,649
+The determinant is the area factor.
+
+154
+00:06:37,840 --> 00:06:40,502
+Eigenvectors are the directions that only stretch,
+
+155
+00:06:40,624 --> 00:06:43,024
+and their eigenvalues are the curvatures that limit
+
+156
+00:06:42,885 --> 00:06:44,183
+how fast you can learn.
+
+157
+00:06:44,375 --> 00:06:45,491
+Where in A.I.?
+
+158
+00:06:45,705 --> 00:06:48,582
+Every layer is a matrix, attention is a matrix
+
+159
+00:06:48,443 --> 00:06:51,571
+product, every image is a matrix, and fine-tuning
+
+160
+00:06:51,432 --> 00:06:52,843
+is a low-rank matrix.
+
+161
+00:06:53,057 --> 00:06:56,252
+How to use it: read a matrix by its columns, check
+
+162
+00:06:56,114 --> 00:06:58,480
+the determinant before you invert, and let the
+
+163
+00:06:58,341 --> 00:07:00,638
+largest eigenvalue set your learning rate.
+
+164
+00:07:00,841 --> 00:07:04,411
+Next: softmax and cross-entropy, how a model turns
+
+165
+00:07:04,273 --> 00:07:05,934
+scores into probabilities.

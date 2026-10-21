@@ -1,0 +1,539 @@
+1
+00:00:00,328 --> 00:00:01,974
+What is gradient descent?
+
+2
+00:00:02,175 --> 00:00:04,346
+It is the algorithm that lets a machine learn:
+
+3
+00:00:04,486 --> 00:00:06,689
+measure the error, find the direction in which
+
+4
+00:00:06,550 --> 00:00:09,301
+it falls fastest, take a step, and repeat.
+
+5
+00:00:10,203 --> 00:00:13,043
+It trains almost every neural network in use today,
+
+6
+00:00:13,172 --> 00:00:15,777
+from image recognition to large language models.
+
+7
+00:00:15,950 --> 00:00:18,812
+But it began long before computers, with a problem
+
+8
+00:00:18,673 --> 00:00:19,783
+about the planets.
+
+9
+00:00:20,590 --> 00:00:22,727
+Paris, eighteen forty-seven.
+
+10
+00:00:22,895 --> 00:00:25,768
+Augustin-Louis Cauchy wants to compute the orbit
+
+11
+00:00:25,630 --> 00:00:26,985
+of a body in the heavens.
+
+12
+00:00:27,188 --> 00:00:28,622
+He has the equations.
+
+13
+00:00:28,806 --> 00:00:31,200
+But nothing he knows will solve them exactly.
+
+14
+00:00:32,014 --> 00:00:33,660
+So he changes the question.
+
+15
+00:00:33,831 --> 00:00:36,336
+Take any guess, and measure how wrong it is.
+
+16
+00:00:36,518 --> 00:00:38,163
+One number: the error.
+
+17
+00:00:38,965 --> 00:00:41,526
+Picture that error for every possible guess.
+
+18
+00:00:41,724 --> 00:00:43,168
+It forms a landscape.
+
+19
+00:00:43,376 --> 00:00:46,037
+High where the guess is poor, low where it is good.
+
+20
+00:00:46,244 --> 00:00:48,436
+The solution sits at the very bottom.
+
+21
+00:00:49,299 --> 00:00:51,614
+But Cauchy cannot see this landscape.
+
+22
+00:00:51,789 --> 00:00:54,808
+Every single point costs him pages of arithmetic.
+
+23
+00:00:54,992 --> 00:00:58,011
+All he can find is the slope, right where he stands.
+
+24
+00:00:58,912 --> 00:01:00,624
+That slope is the gradient.
+
+25
+00:01:00,826 --> 00:01:03,130
+It points where the error grows fastest.
+
+26
+00:01:03,315 --> 00:01:06,076
+So he steps the opposite way, and asks again.
+
+27
+00:01:06,942 --> 00:01:09,771
+From above, the landscape becomes a map of contour
+
+28
+00:01:09,632 --> 00:01:10,306
+lines.
+
+29
+00:01:10,486 --> 00:01:13,582
+Every step crosses them at right angles: the steepest
+
+30
+00:01:13,443 --> 00:01:14,185
+way down.
+
+31
+00:01:14,381 --> 00:01:17,131
+Step by step, the guess slides into the valley.
+
+32
+00:01:17,924 --> 00:01:20,138
+Cauchy wrote this up in three pages.
+
+33
+00:01:20,305 --> 00:01:22,643
+Today it is called gradient descent.
+
+34
+00:01:24,056 --> 00:01:25,489
+Let's do it by hand.
+
+35
+00:01:25,691 --> 00:01:28,408
+Here is a landscape we can write down: f of x,
+
+36
+00:01:28,437 --> 00:01:31,265
+y, equals x squared plus three y squared.
+
+37
+00:01:31,461 --> 00:01:34,234
+From above, its contours are ellipses, and the
+
+38
+00:01:34,095 --> 00:01:35,741
+lowest point is at the origin.
+
+39
+00:01:36,578 --> 00:01:40,858
+Start at x equals -2.6, y equals 1.4.
+
+40
+00:01:41,059 --> 00:01:43,296
+The error there is 12.64.
+
+41
+00:01:44,109 --> 00:01:45,163
+Now the slope.
+
+42
+00:01:45,364 --> 00:01:48,260
+Differentiate with respect to x, treating y as
+
+43
+00:01:48,121 --> 00:01:49,823
+a constant: two x.
+
+44
+00:01:50,030 --> 00:01:52,345
+Then with respect to y: six y.
+
+45
+00:01:52,541 --> 00:01:55,715
+Those two numbers, side by side, are the gradient.
+
+46
+00:01:56,536 --> 00:02:00,291
+At our point, that is -5.2, and 8.4.
+
+47
+00:02:00,493 --> 00:02:03,143
+The error rises fastest up and to the left.
+
+48
+00:02:03,339 --> 00:02:04,750
+So we go the other way.
+
+49
+00:02:05,567 --> 00:02:06,331
+How far?
+
+50
+00:02:06,533 --> 00:02:09,729
+Multiply the gradient by a small number, eta, the
+
+51
+00:02:09,591 --> 00:02:11,325
+learning rate, and subtract.
+
+52
+00:02:11,521 --> 00:02:16,359
+With eta equal to 0.12, the new x is -1.98, and
+
+53
+00:02:16,220 --> 00:02:18,212
+the new y is 0.39.
+
+54
+00:02:19,078 --> 00:02:22,599
+One step, and the error has fallen from 12.64 to
+
+55
+00:02:22,460 --> 00:02:23,726
+4.37.
+
+56
+00:02:23,928 --> 00:02:25,763
+That is the entire algorithm.
+
+57
+00:02:25,948 --> 00:02:27,805
+Everything else is repetition.
+
+58
+00:02:29,257 --> 00:02:31,572
+But that small number matters enormously.
+
+59
+00:02:31,770 --> 00:02:34,018
+Here are four runs on the same landscape.
+
+60
+00:02:34,225 --> 00:02:38,438
+With eta at 0.03, the steps are tiny, and it crawls.
+
+61
+00:02:39,578 --> 00:02:42,485
+At 0.12, it glides into the valley.
+
+62
+00:02:43,328 --> 00:02:47,183
+At 0.31, it overshoots the steep walls and zig-zags
+
+63
+00:02:47,045 --> 00:02:48,199
+from side to side.
+
+64
+00:02:48,401 --> 00:02:52,245
+And at 0.35, every step lands higher than the last.
+
+65
+00:02:52,430 --> 00:02:53,785
+It never comes back.
+
+66
+00:02:54,620 --> 00:02:56,131
+The reason is exact.
+
+67
+00:02:56,322 --> 00:02:59,117
+Along the steep direction, each step multiplies
+
+68
+00:02:58,978 --> 00:03:00,959
+the error by one minus six eta.
+
+69
+00:03:01,136 --> 00:03:04,244
+Keep that between minus one and one, and you converge.
+
+70
+00:03:04,436 --> 00:03:07,733
+So eta must stay below one third: two, divided
+
+71
+00:03:07,594 --> 00:03:08,994
+by the steepest curvature.
+
+72
+00:03:09,201 --> 00:03:11,729
+The steepest direction sets the speed limit for
+
+73
+00:03:11,590 --> 00:03:12,622
+everything else.
+
+74
+00:03:14,067 --> 00:03:16,036
+Stanford, nineteen sixty.
+
+75
+00:03:16,216 --> 00:03:19,412
+Bernard Widrow and his student, Ted Hoff, are building
+
+76
+00:03:19,274 --> 00:03:20,540
+a machine that learns.
+
+77
+00:03:20,725 --> 00:03:22,058
+They call it Adaline.
+
+78
+00:03:22,911 --> 00:03:24,412
+Their problem is cost.
+
+79
+00:03:24,614 --> 00:03:27,197
+The true gradient needs the error averaged over
+
+80
+00:03:27,058 --> 00:03:27,956
+all the data.
+
+81
+00:03:28,152 --> 00:03:30,813
+So they make a bold simplification: estimate the
+
+82
+00:03:30,674 --> 00:03:33,536
+gradient from a single example, take a step, and
+
+83
+00:03:33,397 --> 00:03:34,094
+move on.
+
+84
+00:03:34,920 --> 00:03:37,692
+Each estimate is noisy, and the path wanders.
+
+85
+00:03:37,865 --> 00:03:40,336
+But on average it still heads downhill, and it
+
+86
+00:03:40,197 --> 00:03:41,530
+costs almost nothing.
+
+87
+00:03:42,411 --> 00:03:44,280
+They called it least mean squares.
+
+88
+00:03:44,453 --> 00:03:47,315
+Today we call the idea stochastic gradient descent,
+
+89
+00:03:47,444 --> 00:03:49,602
+and it is how every large model is trained.
+
+90
+00:03:51,097 --> 00:03:52,1000
+And it went straight into industry.
+
+91
+00:03:53,202 --> 00:03:54,780
+Here is the classic case.
+
+92
+00:03:54,976 --> 00:03:57,693
+A microphone picks up a signal we want, buried
+
+93
+00:03:57,554 --> 00:04:00,048
+under noise that is louder than the signal itself.
+
+94
+00:04:00,870 --> 00:04:03,263
+A second microphone hears only the noise.
+
+95
+00:04:03,443 --> 00:04:06,416
+An adaptive filter, with just two weights, predicts
+
+96
+00:04:06,277 --> 00:04:08,593
+how that noise leaks into the first microphone,
+
+97
+00:04:08,621 --> 00:04:09,709
+and subtracts it.
+
+98
+00:04:10,537 --> 00:04:12,974
+Its error surface is a bowl, and the bottom of
+
+99
+00:04:12,836 --> 00:04:14,370
+the bowl is the true leak.
+
+100
+00:04:14,571 --> 00:04:17,500
+After every single sample, the filter takes one
+
+101
+00:04:17,362 --> 00:04:18,482
+Widrow-Hoff step.
+
+102
+00:04:19,328 --> 00:04:21,666
+Watch the weights walk downhill, and the signal
+
+103
+00:04:21,527 --> 00:04:22,201
+emerge.
+
+104
+00:04:22,403 --> 00:04:27,118
+In 4000 samples, the noise drops by 28 decibels.
+
+105
+00:04:26,979 --> 00:04:29,049
+Nobody told the filter the answer.
+
+106
+00:04:28,910 --> 00:04:32,375
+It found 0.8 and -0.5 on its own.
+
+107
+00:04:33,234 --> 00:04:35,906
+This is the mathematics inside echo cancellation
+
+108
+00:04:35,767 --> 00:04:39,009
+on phone calls, noise-cancelling headphones, modems,
+
+109
+00:04:39,015 --> 00:04:40,236
+and medical monitors.
+
+110
+00:04:41,692 --> 00:04:42,902
+Now scale it up.
+
+111
+00:04:43,082 --> 00:04:45,765
+A neural network's error landscape is not a smooth
+
+112
+00:04:45,626 --> 00:04:46,189
+bowl.
+
+113
+00:04:46,396 --> 00:04:49,281
+It is rugged, and it has not two dimensions, but
+
+114
+00:04:49,142 --> 00:04:51,212
+billions: one for every weight.
+
+115
+00:04:52,078 --> 00:04:53,612
+The rule does not change.
+
+116
+00:04:53,784 --> 00:04:56,446
+Backpropagation computes the gradient for every
+
+117
+00:04:56,307 --> 00:04:57,361
+weight at once.
+
+118
+00:04:57,553 --> 00:05:00,404
+Small random batches of data make each step cheap,
+
+119
+00:05:00,510 --> 00:05:02,401
+exactly as Widrow and Hoff did.
+
+120
+00:05:03,275 --> 00:05:05,892
+Refinements such as momentum and Adam smooth the
+
+121
+00:05:05,753 --> 00:05:08,336
+path, and the learning rate is warmed up, then
+
+122
+00:05:08,197 --> 00:05:09,262
+slowly decayed.
+
+123
+00:05:09,435 --> 00:05:12,051
+But underneath, it is still Cauchy's idea.
+
+124
+00:05:13,514 --> 00:05:15,628
+So, what is gradient descent?
+
+125
+00:05:15,808 --> 00:05:18,558
+An algorithm that reduces an error by repeatedly
+
+126
+00:05:18,419 --> 00:05:20,076
+stepping against its gradient.
+
+127
+00:05:20,911 --> 00:05:22,244
+When was it invented?
+
+128
+00:05:22,417 --> 00:05:24,777
+In eighteen forty-seven, by Cauchy.
+
+129
+00:05:24,969 --> 00:05:26,503
+How is it used in A.I.?
+
+130
+00:05:26,710 --> 00:05:29,159
+It adjusts the weights of a model, a little after
+
+131
+00:05:29,020 --> 00:05:31,648
+every batch of data, until the predictions stop
+
+132
+00:05:31,509 --> 00:05:32,250
+improving.
+
+133
+00:05:33,109 --> 00:05:35,848
+Next: how does a network find the gradient for
+
+134
+00:05:35,709 --> 00:05:37,209
+a billion weights at once?
+
+135
+00:05:37,389 --> 00:05:38,968
+That is backpropagation.

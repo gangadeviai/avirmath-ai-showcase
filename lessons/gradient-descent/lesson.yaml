@@ -1,0 +1,299 @@
+# AVIRMATH AI lesson file — the shared representation for website, experiments and video.
+# Numbers are never typed here: {placeholders} are filled from mathcore at build time.
+
+id: gradient-descent
+title: "What Is Gradient Descent? From Cauchy's Orbits (1847) to Training AI"
+version: 3
+mathcore: avirmath.mathcore.gd_lesson_facts
+
+one_idea: >
+  When no formula gives the answer, measure your error, find the direction in which it
+  grows fastest, and step the opposite way; repeat. That procedure, from 1847, trains
+  nearly every neural network today.
+
+audience:
+  profile: {level: engineer, field: general}
+
+analogy:
+  name: "none: the historical problems themselves are the examples"
+  mapping: {"Cauchy's error u(x, y)": "the loss", "his guess (x, y)": "the parameters"}
+  breaks_when: "The examples have two unknowns; a modern network has billions. The rule is unchanged."
+
+voice:
+  engine: edge-tts
+  name: en-GB-SoniaNeural
+  rate: "+12%"
+
+colors:
+  parameter: QUERY
+  loss: KEY
+  gradient: NEGATIVE
+  learning_rate: WEIGHT
+  optimum: VALUE
+
+# Search (SEO), answer engines (AEO) and generative engines (GEO): the questions people and AI
+# assistants actually ask, answered in one or two quotable sentences. The narration answers the
+# same questions out loud (hook and recap), so transcript, captions and page all agree.
+seo:
+  primary_question: "What is gradient descent?"
+  short_answer: >
+    Gradient descent is an optimisation algorithm that reduces an error by repeatedly stepping in
+    the direction opposite to its gradient, the direction in which the error falls fastest. It was
+    proposed by Augustin-Louis Cauchy in 1847 and is the method used to train almost every neural
+    network today.
+  keywords: [gradient descent, what is gradient descent, learning rate, stochastic gradient descent,
+             LMS algorithm, Widrow Hoff, Cauchy 1847, how neural networks learn, loss function,
+             backpropagation, adaptive filter, noise cancellation, machine learning mathematics]
+  faq:
+    - q: "What is gradient descent in simple terms?"
+      a: "A way to find the lowest point of an error landscape without seeing it: measure the slope where you stand, take a step downhill, and repeat."
+    - q: "Who invented gradient descent, and when?"
+      a: "Augustin-Louis Cauchy described it in 1847 in a three-page note to the French Academy of Sciences, while working on equations from astronomy."
+    - q: "How is gradient descent used in AI and machine learning?"
+      a: "A model's error is written as a function of its weights. Backpropagation computes the gradient of that error, and gradient descent nudges every weight against it after each small batch of data."
+    - q: "What is the learning rate?"
+      a: "The number that scales each step. Too small and learning crawls; too large and the steps overshoot and diverge. For a quadratic error it must stay below 2 divided by the steepest curvature."
+    - q: "What is stochastic gradient descent?"
+      a: "Gradient descent that estimates the gradient from one example or a small random batch instead of the whole dataset. Widrow and Hoff introduced the idea in 1960 as the LMS algorithm."
+    - q: "Where is gradient descent used in industry?"
+      a: "In training neural networks of every kind, and, through the LMS algorithm, in echo cancellation, noise-cancelling headphones, modems and medical signal monitoring."
+  sources:
+    - "A.-L. Cauchy, Methode generale pour la resolution des systemes d'equations simultanees, Comptes Rendus de l'Academie des Sciences, 1847"
+    - "B. Widrow and M. E. Hoff, Adaptive switching circuits, IRE WESCON Convention Record, 1960"
+
+equations:
+  - id: f_def
+    tex: 'f(x, y) = x^{2} + 3y^{2}'
+    checked_by: test_landscape_walk_is_steepest_descent_and_reaches_the_valley
+  - id: gradient_def
+    tex: '\nabla f = \left( \frac{\partial f}{\partial x},\; \frac{\partial f}{\partial y} \right) = (2x,\; 6y)'
+    checked_by: test_bowl_gradient_matches_numerical
+  - id: update_general
+    tex: '\theta \leftarrow \theta - \eta \,\nabla_{\theta} L(\theta)'
+    checked_by: test_landscape_walk_is_steepest_descent_and_reaches_the_valley
+  - id: lr_limit
+    tex: '|1 - 6\eta| < 1 \;\Longleftrightarrow\; \eta < \tfrac{1}{3} = \frac{2}{\lambda_{\max}}'
+    checked_by: test_bowl_stability_limit_is_set_by_steepest_direction
+  - id: lms_update
+    tex: '\mathbf{w} \leftarrow \mathbf{w} + 2\mu\, e\, \mathbf{x}'
+    checked_by: test_lms_update_is_a_one_sample_gradient_step
+
+chapters:
+  - id: hook
+    title: "What is gradient descent?"
+    scene: Hook
+    beats:
+      - id: hook-1
+        cue: question
+        narration: >
+          What is gradient descent? It is the algorithm that lets a machine learn: measure the
+          error, find the direction in which it falls fastest, take a step, and repeat.
+      - id: hook-2
+        cue: scope
+        narration: >
+          It trains almost every neural network in use today, from image recognition to large
+          language models. But it began long before computers, with a problem about the planets.
+
+  - id: paris
+    title: "Paris, 1847: Cauchy's idea"
+    scene: Paris1847
+    beats:
+      - id: paris-1
+        cue: the_problem
+        narration: >
+          Paris, eighteen forty-seven. Augustin-Louis Cauchy wants to compute the orbit of a body
+          in the heavens. He has the equations. But nothing he knows will solve them exactly.
+      - id: paris-2
+        cue: the_error
+        narration: >
+          So he changes the question. Take any guess, and measure how wrong it is. One number:
+          the error.
+      - id: paris-3
+        cue: the_landscape
+        narration: >
+          Picture that error for every possible guess. It forms a landscape. High where the guess
+          is poor, low where it is good. The solution sits at the very bottom.
+      - id: paris-4
+        cue: blind
+        narration: >
+          But Cauchy cannot see this landscape. Every single point costs him pages of arithmetic.
+          All he can find is the slope, right where he stands.
+      - id: paris-5
+        cue: the_gradient
+        narration: >
+          That slope is the gradient. It points where the error grows fastest. So he steps the
+          opposite way, and asks again.
+      - id: paris-6
+        cue: from_above
+        narration: >
+          From above, the landscape becomes a map of contour lines. Every step crosses them at
+          right angles: the steepest way down. Step by step, the guess slides into the valley.
+      - id: paris-7
+        cue: name_it
+        equations: [update_general]
+        narration: >
+          Cauchy wrote this up in three pages. Today it is called gradient descent.
+
+  - id: math
+    title: "The mathematics, step by step"
+    scene: WorkedExample
+    beats:
+      - id: math-1
+        cue: the_function
+        equations: [f_def]
+        narration: >
+          Let's do it by hand. Here is a landscape we can write down: f of x, y, equals x squared
+          plus three y squared. From above, its contours are ellipses, and the lowest point is at
+          the origin.
+      - id: math-2
+        cue: start_point
+        narration: >
+          Start at x equals {x0:g}, y equals {y0:g}. The error there is {f0:g}.
+      - id: math-3
+        cue: partials
+        equations: [gradient_def]
+        narration: >
+          Now the slope. Differentiate with respect to x, treating y as a constant: two x. Then
+          with respect to y: six y. Those two numbers, side by side, are the gradient.
+      - id: math-4
+        cue: evaluate
+        narration: >
+          At our point, that is {gx0:g}, and {gy0:g}. The error rises fastest up and to the left.
+          So we go the other way.
+      - id: math-5
+        cue: step
+        narration: >
+          How far? Multiply the gradient by a small number, eta, the learning rate, and subtract.
+          With eta equal to {lr:g}, the new x is {x1:g}, and the new y is {y1:g}.
+      - id: math-6
+        cue: result
+        narration: >
+          One step, and the error has fallen from {f0:g} to {f1:g}. That is the entire algorithm.
+          Everything else is repetition.
+
+  - id: step
+    title: "The learning rate: how big a step?"
+    scene: StepSize
+    beats:
+      - id: step-1
+        cue: crawl
+        narration: >
+          But that small number matters enormously. Here are four runs on the same landscape.
+          With eta at {lr_crawl:g}, the steps are tiny, and it crawls.
+      - id: step-2
+        cue: good
+        narration: >
+          At {lr:g}, it glides into the valley.
+      - id: step-3
+        cue: zigzag_diverge
+        narration: >
+          At {lr_zigzag:g}, it overshoots the steep walls and zig-zags from side to side. And at
+          {lr_diverge:g}, every step lands higher than the last. It never comes back.
+      - id: step-4
+        cue: why
+        equations: [lr_limit]
+        narration: >
+          The reason is exact. Along the steep direction, each step multiplies the error by one
+          minus six eta. Keep that between minus one and one, and you converge. So eta must stay
+          below one third: two, divided by the steepest curvature. The steepest direction sets the
+          speed limit for everything else.
+
+  - id: stanford
+    title: "Stanford, 1960: Widrow, Hoff and stochastic gradient descent"
+    scene: Stanford1960
+    beats:
+      - id: stanford-1
+        cue: adaline
+        narration: >
+          Stanford, nineteen sixty. Bernard Widrow and his student, Ted Hoff, are building a
+          machine that learns. They call it Adaline.
+      - id: stanford-2
+        cue: cost
+        narration: >
+          Their problem is cost. The true gradient needs the error averaged over all the data. So
+          they make a bold simplification: estimate the gradient from a single example, take a
+          step, and move on.
+      - id: stanford-3
+        cue: noisy_path
+        equations: [lms_update]
+        narration: >
+          Each estimate is noisy, and the path wanders. But on average it still heads downhill,
+          and it costs almost nothing.
+      - id: stanford-4
+        cue: name_sgd
+        narration: >
+          They called it least mean squares. Today we call the idea stochastic gradient descent,
+          and it is how every large model is trained.
+
+  - id: industry
+    title: "In industry: the adaptive noise canceller"
+    scene: NoiseCanceller
+    beats:
+      - id: industry-1
+        cue: buried_signal
+        narration: >
+          And it went straight into industry. Here is the classic case. A microphone picks up a
+          signal we want, buried under noise that is louder than the signal itself.
+      - id: industry-2
+        cue: two_weights
+        narration: >
+          A second microphone hears only the noise. An adaptive filter, with just two weights,
+          predicts how that noise leaks into the first microphone, and subtracts it.
+      - id: industry-3
+        cue: bowl
+        narration: >
+          Its error surface is a bowl, and the bottom of the bowl is the true leak. After every
+          single sample, the filter takes one Widrow-Hoff step.
+      - id: industry-4
+        cue: descend
+        narration: >
+          Watch the weights walk downhill, and the signal emerge. In {lms_samples} samples, the
+          noise drops by {lms_gain_db} decibels. Nobody told the filter the answer. It found
+          {lms_w0:g} and {lms_w1:g} on its own.
+      - id: industry-5
+        cue: where_used
+        narration: >
+          This is the mathematics inside echo cancellation on phone calls, noise-cancelling
+          headphones, modems, and medical monitors.
+
+  - id: today
+    title: "Today: how gradient descent trains neural networks"
+    scene: Today
+    beats:
+      - id: today-1
+        cue: rugged
+        narration: >
+          Now scale it up. A neural network's error landscape is not a smooth bowl. It is rugged,
+          and it has not two dimensions, but billions: one for every weight.
+      - id: today-2
+        cue: same_rule
+        equations: [update_general]
+        narration: >
+          The rule does not change. Backpropagation computes the gradient for every weight at
+          once. Small random batches of data make each step cheap, exactly as Widrow and Hoff did.
+      - id: today-3
+        cue: refinements
+        narration: >
+          Refinements such as momentum and Adam smooth the path, and the learning rate is warmed
+          up, then slowly decayed. But underneath, it is still Cauchy's idea.
+
+  - id: recap
+    title: "Recap: what, when and how"
+    scene: Recap
+    beats:
+      - id: recap-1
+        cue: what
+        narration: >
+          So, what is gradient descent? An algorithm that reduces an error by repeatedly stepping
+          against its gradient.
+      - id: recap-2
+        cue: when_how
+        narration: >
+          When was it invented? In eighteen forty-seven, by Cauchy. How is it used in A.I.? It
+          adjusts the weights of a model, a little after every batch of data, until the
+          predictions stop improving.
+      - id: recap-3
+        cue: next
+        narration: >
+          Next: how does a network find the gradient for a billion weights at once? That is
+          backpropagation.

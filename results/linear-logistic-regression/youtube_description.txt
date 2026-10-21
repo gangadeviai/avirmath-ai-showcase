@@ -1,0 +1,30 @@
+Use linear regression when the target is a number (demand, price, duration) and logistic regression when the target is yes or no (default, disease, churn); use softmax for several classes. Both fit a weighted sum of features, logistic through a sigmoid, and both give a readable coefficient per feature, which is why they underwrite credit scoring and clinical risk scores. Fit them first as the baseline, judge them on held-out data with the right metric (RMSE or MAE for a number, AUC and calibration for a probability), and watch for the four classic failures: extrapolation, data leakage, class imbalance with an unchosen threshold, and a non-linear relationship visible in the residuals. This lesson does all of that on 1,000 real German loans and 17,379 real hours of bike rentals.
+
+CHAPTERS
+0:00 A real decision and its data
+0:54 Which model, when
+1:50 Least squares, by hand
+3:31 Linear regression on a real job: bike demand
+4:37 Logistic regression, by hand
+6:03 Logistic regression on a real job: credit risk
+7:21 When it fails: four things to check
+8:58 The checklist
+
+QUESTIONS ANSWERED IN THIS VIDEO
+- When should I use linear regression and when logistic regression?
+- What must the dataset look like?
+- How do I know the model worked?
+- What are the main ways regression fails in practice?
+- How do I read a logistic regression coefficient?
+- Is a neuron the same as logistic regression?
+
+SOURCES
+- H. Hofmann, Statlog (German Credit Data), UCI Machine Learning Repository, 1994 (CC BY 4.0): 1,000 loans, 20 attributes
+- H. Fanaee-T and J. Gama, Bike Sharing Dataset, UCI Machine Learning Repository, 2013 (CC BY 4.0): 17,379 hourly records, 2011-2012
+- G. James, D. Witten, T. Hastie, R. Tibshirani, An Introduction to Statistical Learning, chapters 3-4
+- D. W. Hosmer, S. Lemeshow, R. X. Sturdivant, Applied Logistic Regression, 3rd ed., 2013
+- S. Kaufman et al., Leakage in data mining: formulation, detection, and avoidance, ACM TKDD 2012
+
+All mathematics in this video is computed and independently tested; nothing is drawn by hand.
+
+#linearregressionvslogisticregression #whentouselogisticregression #linearregressionmachinelearning #logisticregressioncreditscoring #Germancreditdatasetlogisticregression

@@ -1,0 +1,5 @@
+TITLE
+What Is Gradient Descent? From Cauchy's Orbits (1847) to Training AI
+
+TAGS
+gradient descent, what is gradient descent, learning rate, stochastic gradient descent, LMS algorithm, Widrow Hoff, Cauchy 1847, how neural networks learn, loss function, backpropagation, adaptive filter, noise cancellation, machine learning mathematics

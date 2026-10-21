@@ -1,0 +1,5 @@
+TITLE
+Linear vs Logistic Regression in Machine Learning: Which Model, When, on Real Data (Credit Risk and Demand Forecasting)
+
+TAGS
+linear regression vs logistic regression, when to use logistic regression, linear regression machine learning, logistic regression credit scoring, German credit dataset logistic regression, bike sharing demand forecasting linear regression, which machine learning model to choose, AUC and calibration explained, data leakage example, regression extrapolation failure, class imbalance threshold, odds ratio interpretation, normal equations, gradient descent regression, math behind AI, machine learning mathematics

@@ -1,0 +1,5 @@
+TITLE
+Matrices in AI: The Linear Algebra Inside Every Neural Network Layer, Attention Head and Recommender
+
+TAGS
+matrices in machine learning, linear algebra for deep learning, matrix multiplication neural network, how attention works QK transpose, matrix as linear transformation, eigenvectors eigenvalues learning rate, determinant explained, GPT-2 layer dimensions, LoRA low-rank adaptation explained, singular value decomposition recommender system, PageRank eigenvector, convolution as matrix multiplication, math behind AI, machine learning mathematics

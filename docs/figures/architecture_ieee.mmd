@@ -1,0 +1,74 @@
+%% AVIRMATH AI - five-layer workflow architecture (IEEE Transactions style, print-safe palette)
+%% Layers are connected as whole blocks so that each layer keeps its left-to-right order.
+flowchart TD
+
+    subgraph L1["Layer 1 - Data Preprocessing: inputs and verified knowledge"]
+        direction LR
+        S1["Raw Data Sources<br/>catalogue topic or paid learner request<br/>primary history sources (web)<br/>founder rules in the AvirmathAI skill"]
+        S2["Ingestion and Cleaning<br/>lesson schema validation (jsonschema)<br/>source and date cross-check<br/>placeholder binding to verified facts"]
+        S3["Mathematics as Code<br/>mathcore module (NumPy, SymPy)<br/>facts dictionary: the only quotable numbers<br/>unit tests bound to every equation"]
+        S1 --> S2 --> S3
+    end
+
+    subgraph L2["Layer 2 - Orchestration and Reasoning"]
+        direction LR
+        O1["Lesson Director (Orchestrator)<br/>job state and routing<br/>goal persistence and run trace<br/>bounded retries (max 3)"]
+        O2["Eight Specialised Agent Roles<br/>Profiler, Historian, Math Author,<br/>Math Verifier, Lesson Writer,<br/>Animation Director, Visual Critic,<br/>Experiment Builder (plan, act, check)"]
+        O3["File-based Memory (no vector database)<br/>procedural: skill files<br/>working: shared artifact store<br/>long-term: project memory across sessions"]
+        O1 --> O2
+        O2 <--> O3
+    end
+
+    subgraph L3["Layer 3 - Core Models and Compute"]
+        direction LR
+        M1["Language Model<br/>frontier LLM via an agent runtime<br/>one model, all eight roles<br/>image input for frame review"]
+        M2["Speech Model<br/>Microsoft neural TTS, en-GB Sonia<br/>via edge-tts, word-level timings"]
+        M3["Deterministic Renderers and Compute<br/>Manim CE 0.21 + LaTeX frames<br/>FFmpeg assembly, Python 3.13 site generator<br/>local workstation, batched rendering"]
+        M1 --- M2 --- M3
+    end
+
+    subgraph L4["Layer 4 - Governance and Execution Loop"]
+        direction LR
+        G1["Tool Integration<br/>pytest and SymPy checks<br/>schema validator<br/>snapshot renderer (one still per beat)<br/>browser-based page checks"]
+        G2["Verification Gates and Feedback<br/>failed gate returns the exact error<br/>to the responsible agent<br/>strategy recalibration, then retry"]
+        G3["Real-time Evaluation Metrics<br/>125 math tests passing<br/>beat overrun = 0 s<br/>frame defects = 0<br/>facts coverage = 100%"]
+        G1 <--> G2
+        G2 <--> G3
+    end
+
+    subgraph L5["Layer 5 - Downstream Output and Safety"]
+        direction LR
+        D1["Safety and Guardrail Boundaries<br/>numbers only from the facts dictionary<br/>history only with sources<br/>fixed branding and voice rules"]
+        D2["Observability and Human-in-the-Loop<br/>storyboard approval by the founder<br/>run trace and QA stills<br/>stop after 3 failed retries"]
+        D3["Downstream Delivery<br/>narrated video, captions, chapters<br/>lesson web page with assessment<br/>interactive experiment, SEO/AEO/GEO pack<br/>static site deployment"]
+        D1 --> D2 --> D3
+    end
+
+    %% Inter-layer flow (block to block, so each layer keeps its row layout)
+    L1 -->|"verified facts and lesson inputs"| L2
+    L2 -->|"agent requests: text, speech, frames"| L3
+    L3 -->|"candidate artifacts"| L4
+    L4 -->|"gate results and metrics"| L5
+    %% Feedback loops (dotted). Written as start-arrows so the layers keep their 1-to-5 order:
+    %% a failed gate returns the error to the agents; learner feedback and on-demand requests return to the inputs.
+    L2 <-.- L4
+    L1 <-.- L5
+
+    %% Styling: soft desaturated fills, thin dark borders, print-safe
+    classDef data fill:#F7F7F7,stroke:#333333,stroke-width:1px,color:#111111
+    classDef orch fill:#FBF3E6,stroke:#333333,stroke-width:1px,color:#111111
+    classDef model fill:#EAF0FA,stroke:#333333,stroke-width:1px,color:#111111
+    classDef gov fill:#EEF6EE,stroke:#333333,stroke-width:1px,color:#111111
+    classDef out fill:#F3EEF8,stroke:#333333,stroke-width:1px,color:#111111
+
+    class S1,S2,S3 data
+    class O1,O2,O3 orch
+    class M1,M2,M3 model
+    class G1,G2,G3 gov
+    class D1,D2,D3 out
+
+    style L1 fill:#FFFFFF,stroke:#555555,stroke-width:1px,stroke-dasharray:4 3
+    style L2 fill:#FFFFFF,stroke:#555555,stroke-width:1px,stroke-dasharray:4 3
+    style L3 fill:#FFFFFF,stroke:#555555,stroke-width:1px,stroke-dasharray:4 3
+    style L4 fill:#FFFFFF,stroke:#555555,stroke-width:1px,stroke-dasharray:4 3
+    style L5 fill:#FFFFFF,stroke:#555555,stroke-width:1px,stroke-dasharray:4 3

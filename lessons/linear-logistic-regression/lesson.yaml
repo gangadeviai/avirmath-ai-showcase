@@ -1,0 +1,357 @@
+# AVIRMATH AI lesson file — shared representation for website, experiments and video.
+# {placeholders} are filled from avirmath.mathcore.regression.lesson_facts() at build time.
+# v3 (2026-10-12): built around two real public datasets (German Credit, UCI; hourly bike rentals, UCI).
+# Structure: the problem and its data -> which model, when -> the maths by hand -> the real job ->
+# did it work -> when it fails -> checklist. No history chapter.
+
+id: linear-logistic-regression
+title: "Linear vs Logistic Regression in Machine Learning: Which Model, When, on Real Data (Credit Risk and Demand Forecasting)"
+version: 3
+mathcore: avirmath.mathcore.regression
+
+one_idea: >
+  A number to predict means linear regression; a yes-or-no means logistic regression. Both fit the
+  same weighted sum, one through a sigmoid, and both are the baseline every deeper model must beat.
+  The lesson fits them to two real datasets, reads the coefficients the way a bank or an operations
+  team does, tests them on held-out data, and shows the four ways they fail in practice.
+
+audience:
+  profile: {level: engineer, field: general}
+
+analogy:
+  name: "none: the fitted line, the fitted curve and the real tables are the picture"
+  mapping: {"vertical distances": "the residuals", "their squares summed": "the loss"}
+  breaks_when: "A neural network stacks many such units with non-linearities between them; the loss and the gradient rule are inherited unchanged."
+
+voice:
+  engine: edge-tts
+  name: en-GB-SoniaNeural
+  rate: "+6%"
+
+colors:
+  parameter: QUERY
+  loss: KEY
+  gradient: NEGATIVE
+  learning_rate: WEIGHT
+  optimum: VALUE
+
+seo:
+  primary_question: "When should you use linear regression and when logistic regression in machine learning?"
+  short_answer: >
+    Use linear regression when the target is a number (demand, price, duration) and logistic
+    regression when the target is yes or no (default, disease, churn); use softmax for several
+    classes. Both fit a weighted sum of features, logistic through a sigmoid, and both give a
+    readable coefficient per feature, which is why they underwrite credit scoring and clinical risk
+    scores. Fit them first as the baseline, judge them on held-out data with the right metric (RMSE
+    or MAE for a number, AUC and calibration for a probability), and watch for the four classic
+    failures: extrapolation, data leakage, class imbalance with an unchosen threshold, and a
+    non-linear relationship visible in the residuals. This lesson does all of that on 1,000 real
+    German loans and 17,379 real hours of bike rentals.
+  keywords: [linear regression vs logistic regression, when to use logistic regression, linear regression machine learning,
+             logistic regression credit scoring, German credit dataset logistic regression, bike sharing demand forecasting
+             linear regression, which machine learning model to choose, AUC and calibration explained, data leakage example,
+             regression extrapolation failure, class imbalance threshold, odds ratio interpretation, normal equations,
+             gradient descent regression, math behind AI, machine learning mathematics]
+  faq:
+    - q: "When should I use linear regression and when logistic regression?"
+      a: "Linear regression when the target is a number you want to predict (rentals per hour, price, length of stay). Logistic regression when the target is a yes or no and you want a probability (loan default, disease, churn). Softmax when there are several classes."
+    - q: "What must the dataset look like?"
+      a: "One row per example, one column per feature that was known at decision time, and one target column. Hold out part of the rows (here 200 of 1,000 loans, 20 percent of the bike hours) to test the model on data it never saw."
+    - q: "How do I know the model worked?"
+      a: "For a number: mean absolute error, root mean square error and the variance explained on the held-out rows. For a probability: accuracy against the trivial baseline, area under the ROC curve, and calibration (when it says 30 percent, do about 30 percent go bad?)."
+    - q: "What are the main ways regression fails in practice?"
+      a: "Extrapolating outside the training range, leaked features that already contain the answer, class imbalance with an unexamined threshold, and a non-linear relationship that shows up as a pattern in the residuals."
+    - q: "How do I read a logistic regression coefficient?"
+      a: "e to the coefficient is an odds ratio: how the odds of the positive class multiply per unit increase of that feature, holding the others fixed. On the German Credit data a better current-account balance roughly halves the odds of a bad loan."
+    - q: "Is a neuron the same as logistic regression?"
+      a: "Yes. A weighted sum of inputs plus a bias, passed through a sigmoid and trained by gradient descent on cross-entropy, is one neuron, and the last layer of a classifier is a logistic or softmax regression on learned features."
+  sources:
+    - "H. Hofmann, Statlog (German Credit Data), UCI Machine Learning Repository, 1994 (CC BY 4.0): 1,000 loans, 20 attributes"
+    - "H. Fanaee-T and J. Gama, Bike Sharing Dataset, UCI Machine Learning Repository, 2013 (CC BY 4.0): 17,379 hourly records, 2011-2012"
+    - "G. James, D. Witten, T. Hastie, R. Tibshirani, An Introduction to Statistical Learning, chapters 3-4"
+    - "D. W. Hosmer, S. Lemeshow, R. X. Sturdivant, Applied Logistic Regression, 3rd ed., 2013"
+    - "S. Kaufman et al., Leakage in data mining: formulation, detection, and avoidance, ACM TKDD 2012"
+
+equations:
+  - id: sse
+    tex: 'S(w, b) = \sum_{i}\,(w x_i + b - y_i)^{2}'
+    checked_by: test_sse_gradient_symbolically_and_numerically
+  - id: closed
+    tex: 'w = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sum (x_i - \bar{x})^{2}}, \qquad b = \bar{y} - w\bar{x}'
+    checked_by: test_normal_equations_derive_the_closed_form_symbolically
+  - id: normal
+    tex: 'X^{\top}X\,\boldsymbol{\theta} = X^{\top}\mathbf{y}'
+    checked_by: test_closed_form_matches_normal_equations_and_numpy
+  - id: gd
+    tex: '\frac{\partial S}{\partial w} = 2\sum r_i x_i, \quad \frac{\partial S}{\partial b} = 2\sum r_i, \quad r_i = w x_i + b - y_i'
+    checked_by: test_gradient_descent_reaches_the_closed_form
+  - id: sigmoid
+    tex: 'p = \sigma(wx + b) = \frac{1}{1 + e^{-(wx+b)}}, \qquad \log\frac{p}{1-p} = wx + b'
+    checked_by: test_sigmoid_and_logit_are_inverses_and_logit_is_log_odds
+  - id: nll
+    tex: 'L = -\sum_i \big[\,y_i \log p_i + (1-y_i)\log(1-p_i)\,\big]'
+    checked_by: test_logistic_fit_separates_the_hours_example
+  - id: lgrad
+    tex: '\frac{\partial L}{\partial \mathbf{w}} = X^{\top}(\mathbf{p} - \mathbf{y})'
+    checked_by: test_logistic_gradient_is_prediction_minus_truth
+  - id: metrics
+    tex: '\mathrm{RMSE} = \sqrt{\tfrac{1}{n}\sum (y_i - \hat{y}_i)^{2}}, \qquad \mathrm{MAE} = \tfrac{1}{n}\sum |y_i - \hat{y}_i|'
+    checked_by: test_bike_rentals_linear_model_and_its_failure_modes
+  - id: auc
+    tex: '\mathrm{AUC} = P\big(s_{\text{bad}} > s_{\text{good}}\big)'
+    checked_by: test_auc_and_ece_behave_like_the_definitions
+  - id: odds
+    tex: '\mathrm{OR}_j = e^{w_j}'
+    checked_by: test_german_credit_loads_and_the_model_beats_the_approve_everyone_baseline
+
+chapters:
+  - id: problem
+    title: "A real decision and its data"
+    scene: ProblemRG
+    beats:
+      - id: prob-1
+        cue: bank
+        narration: >
+          Let me start where a working data scientist starts, with a decision somebody has to make.
+          A bank receives a loan application and has to decide whether to lend. Behind that decision
+          sits a table of past loans, and the one we will use is real: {german_n:,} loans from a
+          German bank, published for research, with twenty facts about each borrower and a final
+          column that records whether the loan was repaid or went bad. Seven hundred were repaid, and
+          three hundred were not.
+      - id: prob-2
+        cue: dataset
+        narration: >
+          Before any formula, notice what this table must contain, because it is what you will need
+          for your own problem. Each row is one example, each column is a feature you knew at
+          decision time, and one column is the target you want to predict. We will keep eight
+          features, such as the balance of the current account, the loan duration, the amount, the
+          savings and the age. And we will hide {german_test} rows from the model, so that at the end
+          we can test it on loans it has never seen.
+
+  - id: choose
+    title: "Which model, when"
+    scene: ChooseRG
+    beats:
+      - id: choose-1
+        cue: chart
+        narration: >
+          Which model, then? The first question is what kind of answer you need. If the target is a
+          number, such as how many bikes will be rented at five o'clock, that is a regression problem,
+          and linear regression is the place to start. If the target is a yes or no, such as will this
+          loan go bad, that is classification, and logistic regression is the place to start. If there
+          are several classes, you reach for softmax, which we covered last time.
+      - id: choose-2
+        cue: when
+        narration: >
+          The second question is what you need from the answer. When a regulator or a doctor has to
+          understand the decision, a linear or logistic model gives you a readable coefficient for
+          every feature, and that readability is often the reason it wins. When the relationship is
+          clearly not a straight line and you have the data to prove it, a tree ensemble or a neural
+          network will fit better. But fit the regression first, because it is the baseline every
+          other model has to beat, and because the last layer of that network is a logistic
+          regression anyway.
+
+  - id: linear
+    title: "Least squares, by hand"
+    scene: LinearRG
+    beats:
+      - id: lin-1
+        cue: residuals
+        equations: [sse]
+        narration: >
+          So let us build linear regression properly, on five points small enough to do by hand: x
+          from one to five, and y equal to two, two point eight, four point one, four point nine, and
+          six point two. Any line, w x plus b, misses each point by some residual, and if we square
+          those residuals and add them up we get a single number, the loss, that says how badly the
+          line is doing. Drag the line, and the loss changes with it.
+      - id: lin-2
+        cue: derive
+        equations: [closed]
+        narration: >
+          To find the best line we set both derivatives of the loss to zero, which gives two
+          equations in two unknowns, and they solve in closed form. The slope is the covariance of x
+          and y divided by the variance of x, and the intercept is chosen so that the line passes
+          through the mean point.
+      - id: lin-3
+        cue: numbers
+        narration: >
+          With our numbers, x bar is {xbar:g} and y bar is {ybar:g}. The covariance sum comes to
+          {sxy:g} and the variance sum to {sxx:g}. So w is {w:g}, and b is {ybar:g} minus {w:g}
+          times {xbar:g}, which is {b:g}. The loss at that line is {sse_fit:g}, down from
+          {sse_zero:g} for a flat line through zero.
+      - id: lin-4
+        cue: normal
+        equations: [normal]
+        narration: >
+          For more than one input the same idea is written once, in matrix form: X transpose X,
+          times theta, equals X transpose y. These are the normal equations, and solving them gives
+          the plane that fits a cloud of points in three dimensions, or the hyperplane that fits a
+          table with six columns, which is exactly what we are about to do.
+      - id: lin-5
+        cue: gd
+        equations: [gd]
+        narration: >
+          And gradient descent, from lesson one, arrives at the same answer. The gradient of the loss
+          is twice the residuals weighted by x, and twice the residuals on their own. Four hundred
+          small steps from zero, and w is {gd_w:g}, b is {gd_b:g}: the closed form, found by walking
+          downhill.
+
+  - id: bike
+    title: "Linear regression on a real job: bike demand"
+    scene: BikeRG
+    beats:
+      - id: bike-1
+        cue: data
+        narration: >
+          Now the real job. A bike-sharing company wants to know how many bikes will be rented in a
+          given hour, so it can move bikes to where they are needed. The data is real: {bike_n:,}
+          hours over two years, and for each hour the temperature, the humidity, the wind, whether
+          it was a working day, and the number of rentals, which averaged {bike_mean}. The hour of
+          the day goes in as a sine and a cosine, so that eleven at night sits next to midnight
+          rather than twenty-three steps away.
+      - id: bike-2
+        cue: fit
+        narration: >
+          We solve the normal equations on {bike_train:,} training hours and read the coefficients.
+          Each extra degree of temperature adds about {bike_coef_temp:g} rentals an hour, and each
+          point of humidity removes about one. Those are sentences the operations team can act on,
+          and no deep model hands them to you so directly.
+      - id: bike-3
+        cue: test
+        equations: [metrics]
+        narration: >
+          Did it work? On the {bike_test:,} held-out hours the typical error is {bike_mae} rentals,
+          the root mean square error is {bike_rmse}, and the model explains {bike_r2:g} of the
+          variance. That is a useful baseline and an honest one, and we will come back to what it
+          gets wrong.
+
+  - id: logistic
+    title: "Logistic regression, by hand"
+    scene: LogisticRG
+    beats:
+      - id: log-1
+        cue: sigmoid
+        equations: [sigmoid]
+        narration: >
+          Now the yes-or-no question. Here are ten students, the hours each one studied, and whether
+          they passed. A straight line predicts numbers below zero and above one, which no
+          probability can be. So we take the linear score and pass it through the sigmoid, one over
+          one plus e to the minus score, and now the output lives between zero and one.
+      - id: log-2
+        cue: logit
+        narration: >
+          Read it backwards and the score has a meaning. The log of p over one minus p, the log-odds,
+          is exactly w x plus b, so each extra unit of x multiplies the odds by e to the w. That is
+          why doctors and banks like this model: every coefficient is an odds ratio they can read
+          aloud.
+      - id: log-3
+        cue: likelihood
+        equations: [nll]
+        narration: >
+          How do we fit it? Not with squared error. We maximise the likelihood of the labels we
+          actually saw, the product of p for every pass and one minus p for every fail. Take the log,
+          flip the sign, and the loss is the cross-entropy from last lesson, for two classes.
+      - id: log-4
+        cue: gradient
+        equations: [lgrad]
+        narration: >
+          Differentiate, and the sigmoid's derivative cancels the log's. The gradient is X transpose
+          times p minus y: prediction minus truth, weighted by the inputs, exactly the softmax rule.
+          There is no closed form this time, so gradient descent does the work.
+      - id: log-5
+        cue: fitted
+        narration: >
+          Fitted, w is {log_w:g} and b is {log_b:g}. The fifty-percent point is
+          {log_boundary_hours:g} hours; two hours of study gives a {log_p_2h:g} chance of passing,
+          and four hours gives {log_p_4h:g}.
+
+  - id: credit
+    title: "Logistic regression on a real job: credit risk"
+    scene: CreditRG
+    beats:
+      - id: credit-1
+        cue: train
+        narration: >
+          Back to the bank. We standardise the eight features so that each is measured in standard
+          deviations, then train logistic regression on the {german_train} loans with nothing but
+          the gradient we just derived. The loss per loan falls from {german_nll_start:g} to
+          {german_nll_end:g}.
+      - id: credit-2
+        cue: odds
+        equations: [odds]
+        narration: >
+          Now the readout a credit officer actually uses. Holding everything else fixed, a better
+          current-account balance multiplies the odds of a bad loan by {or_checking:g}, so it roughly
+          halves them. A longer duration multiplies them by {or_duration:g}, a larger amount by
+          {or_amount:g}, and more savings by {or_savings:g}. Every one of these is a sentence you
+          can defend in front of a regulator.
+      - id: credit-3
+        cue: test
+        equations: [auc]
+        narration: >
+          Did it work? On the {german_test} unseen loans the model is right {german_acc} percent of
+          the time, against {german_base_acc} percent for simply approving everyone, and its area
+          under the curve is {german_auc:g}, which is where published results on this dataset sit.
+          The calibration error is {german_ece:g}, so when it says thirty percent, about thirty
+          percent go bad. And here is one real applicant from the test set: {ex_age} years old, a
+          {ex_duration}-month loan of {ex_amount:,} marks, with a current account {ex_checking}. The
+          model puts the risk at {ex_p} percent, and the bank's threshold decides what happens next.
+
+  - id: fail
+    title: "When it fails: four things to check"
+    scene: FailRG
+    beats:
+      - id: fail-1
+        cue: extrapolate
+        narration: >
+          Now the part most explanations skip: when these models fail. First, extrapolation. The
+          hottest hour in the bike data was {bike_t_max} degrees. Ask the model about sixty degrees
+          and it happily predicts {bike_extrap_pred} rentals, more than at thirty, because a straight
+          line never stops. A regression is only trustworthy inside the range it was trained on.
+      - id: fail-2
+        cue: leak
+        narration: >
+          Second, leakage. The bike table also records casual and registered rentals separately, and
+          the two add up to the total. Put them in as features and the error drops to exactly zero,
+          which looks like a triumph and is actually a model that needs the answer in order to make
+          its prediction. Whenever a result looks too good, ask whether a feature was known before
+          the decision was made.
+      - id: fail-3
+        cue: threshold
+        narration: >
+          Third, imbalance and the threshold. Seventy percent of the loans are good, so approving
+          everyone is already {german_base_acc} percent accurate, and accuracy alone would hide that.
+          At a threshold of one half the model catches {german_recall_05} percent of the bad loans;
+          lower it to zero point three and it catches {german_recall_03} percent, at the cost of
+          flagging {german_flagged_03} applicants instead of {german_flagged_05}. The threshold is a
+          business decision about which mistake costs more, not a mathematical constant.
+      - id: fail-4
+        cue: nonlinear
+        narration: >
+          Fourth, the wrong shape. Look at the bike model's errors by hour of day. At eight in the
+          morning it under-predicts by {bike_resid_8} rentals, at five in the afternoon by
+          {bike_resid_17}, and at three at night it over-predicts by {bike_over_3}: it cannot bend
+          around rush hour. When the residuals show a pattern like this, the relationship is not
+          linear, and that, not fashion, is the signal to move to trees or a neural network.
+
+  - id: recap
+    title: "The checklist"
+    scene: RecapRG
+    beats:
+      - id: recap-1
+        cue: checklist
+        narration: >
+          So here is the checklist. Decide what kind of answer you need: a number means linear
+          regression, a yes or no means logistic, several classes means softmax. Build a table with
+          one row per example, features known at decision time, and a held-out test set. Fit the
+          regression first, read the coefficients as plain sentences, and judge it on the test set
+          with the right metric: error for a number, area under the curve and calibration for a
+          probability.
+      - id: recap-2
+        cue: fails
+        narration: >
+          Then check the four ways it fails: never extrapolate outside the data, hunt for leaked
+          features when a result looks too good, choose the threshold by the cost of each mistake,
+          and look at the residuals for a pattern before you reach for a deeper model. Do that, and
+          you have done what the bank and the bike company actually do. Next: the neuron and
+          activation functions.

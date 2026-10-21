@@ -1,0 +1,320 @@
+# AVIRMATH AI lesson file — shared representation for website, experiments and video.
+# {placeholders} are filled from avirmath.mathcore.vectors.lesson_facts() at build time.
+# Narration is written as spoken prose: equations are said the way a lecturer says them, never symbol by symbol.
+
+id: vectors-dot-product
+title: "What Is a Vector, and What Is the Dot Product? The Geometry Inside Every AI Model"
+version: 1
+mathcore: avirmath.mathcore.vectors
+
+one_idea: >
+  A vector is a list of numbers that is also an arrow, and the dot product is the one number that
+  says how much two arrows agree. Every neuron, every embedding lookup and every attention score
+  is a dot product.
+
+audience:
+  profile: {level: engineer, field: general}
+
+analogy:
+  name: "the shadow"
+  mapping: {"a's shadow on b": "the projection a dot b-hat", "the angle": "the cosine similarity"}
+  breaks_when: "A shadow is a length and is never negative; the dot product carries a sign that says same side or opposite side."
+
+voice:
+  engine: edge-tts
+  name: en-GB-SoniaNeural
+  rate: "+10%"
+
+colors:
+  parameter: QUERY
+  loss: KEY
+  gradient: NEGATIVE
+  learning_rate: WEIGHT
+  optimum: VALUE
+
+seo:
+  primary_question: "What is the dot product?"
+  short_answer: >
+    The dot product of two vectors is the sum of the products of their matching coordinates, which
+    equals the product of their lengths times the cosine of the angle between them. It measures how
+    much two directions agree, and it is the operation inside neurons, embeddings, cosine similarity,
+    attention scores and real-time lighting.
+  keywords: [dot product, what is a vector, scalar product, cosine similarity, projection, vector length,
+             embeddings, word2vec, attention scores, Lambert shading, vector search, semantic search,
+             Gibbs vector analysis, machine learning mathematics]
+  faq:
+    - q: "What is a vector in simple terms?"
+      a: "An ordered list of numbers that you can also draw as an arrow from the origin. Adding vectors adds the numbers; it also places the arrows tip to tail."
+    - q: "What does the dot product tell you?"
+      a: "How much two vectors point the same way: positive when they agree, zero when they are perpendicular, negative when they oppose. Divide by the two lengths and you get the cosine of the angle."
+    - q: "Why are there two formulas for the dot product?"
+      a: "The coordinate formula and the length-times-cosine formula are the same quantity; the law of cosines proves it, so you can compute with coordinates and reason with angles."
+    - q: "What is cosine similarity?"
+      a: "The dot product divided by the two lengths, so only direction counts. Introduced for document retrieval by Salton in 1975, it is how embeddings are compared today."
+    - q: "Where is the dot product used in AI?"
+      a: "Every neuron computes a weighted sum, which is a dot product; attention scores in a Transformer are dot products of queries and keys; vector search ranks items by cosine similarity."
+    - q: "Where is the dot product used in real time?"
+      a: "Every pixel of a 3D game is lit using Lambert's cosine law, the dot product of the surface normal and the light direction, billions of times per second on a GPU."
+  sources:
+    - "W. R. Hamilton, quaternions, 1843; H. Grassmann, Die lineale Ausdehnungslehre, 1844"
+    - "J. W. Gibbs, Elements of Vector Analysis, privately printed 1881–1884; E. B. Wilson, Vector Analysis, 1901"
+    - "J. H. Lambert, Photometria, 1760"
+    - "G. Salton, A. Wong, C. S. Yang, A vector space model for automatic indexing, Communications of the ACM, 1975"
+    - "T. Mikolov et al., Efficient estimation of word representations in vector space, 2013"
+    - "A. Vaswani et al., Attention is all you need, 2017"
+
+equations:
+  - id: length
+    tex: '\|\mathbf{a}\| = \sqrt{a_1^{2} + a_2^{2} + \cdots + a_n^{2}}'
+    checked_by: test_lengths_by_pythagoras
+  - id: dot_alg
+    tex: '\mathbf{a}\cdot\mathbf{b} = a_1 b_1 + a_2 b_2 + \cdots + a_n b_n'
+    checked_by: test_algebraic_and_geometric_definitions_agree
+  - id: dot_geo
+    tex: '\mathbf{a}\cdot\mathbf{b} = \|\mathbf{a}\|\,\|\mathbf{b}\|\cos\theta'
+    checked_by: test_algebraic_and_geometric_definitions_agree
+  - id: cosines
+    tex: '\|\mathbf{a}-\mathbf{b}\|^{2} = \|\mathbf{a}\|^{2} + \|\mathbf{b}\|^{2} - 2\,\mathbf{a}\cdot\mathbf{b}'
+    checked_by: test_law_of_cosines_symbolically
+  - id: proj
+    tex: '\text{shadow of } \mathbf{a} \text{ on } \mathbf{b} = \mathbf{a}\cdot\hat{\mathbf{b}} = \|\mathbf{a}\|\cos\theta'
+    checked_by: test_projection_sign_and_shadow
+  - id: cosine
+    tex: '\cos\theta = \frac{\mathbf{a}\cdot\mathbf{b}}{\|\mathbf{a}\|\,\|\mathbf{b}\|}'
+    checked_by: test_cosine_similarity_ignores_length
+  - id: attention
+    tex: '\text{score}_{ij} = \frac{\mathbf{q}_i\cdot\mathbf{k}_j}{\sqrt{d_k}}'
+    checked_by: test_attention_scores_are_scaled_dot_products
+  - id: neuron
+    tex: 'z = \mathbf{w}\cdot\mathbf{x} + b'
+    checked_by: test_neuron_is_a_dot_product
+  - id: lambert
+    tex: 'I = \max(0,\ \mathbf{n}\cdot\mathbf{l})'
+    checked_by: test_lambert_law
+
+chapters:
+  - id: hook
+    title: "What is a vector? What is the dot product?"
+    scene: HookVec
+    beats:
+      - id: hook-1
+        cue: vector
+        narration: >
+          What is a vector? It is a list of numbers that is also an arrow. Three and four, written
+          as a column, is the same thing as an arrow that goes three across and four up.
+      - id: hook-2
+        cue: dot
+        narration: >
+          And what is the dot product? It is the one number that says how much two arrows agree.
+          Positive when they point the same way, zero when they are at right angles, negative when
+          they oppose. Every neuron, every embedding, every attention score is a dot product. Let us
+          see why.
+
+  - id: origin
+    title: "Where the arrow came from"
+    scene: OriginVec
+    beats:
+      - id: origin-1
+        cue: history
+        narration: >
+          In eighteen forty-three, William Rowan Hamilton invented quaternions to multiply directions
+          in space. A year later, Hermann Grassmann published a general algebra of extended
+          quantities. And between eighteen eighty-one and eighteen eighty-four, Willard Gibbs,
+          teaching at Yale, stripped the idea down to what physicists needed: the vector, with a dot
+          product and a cross product. His notation is the one we still use.
+      - id: origin-2
+        cue: three_faces
+        narration: >
+          So a vector has three faces. A point in space. An arrow from the origin to that point. And
+          a column of coordinates. Move the point, and the arrow and the numbers move with it. They
+          are one object.
+
+  - id: arithmetic
+    title: "Vector arithmetic and length"
+    scene: ArithmeticVec
+    beats:
+      - id: arith-1
+        cue: add
+        narration: >
+          Adding two vectors means adding their coordinates. Geometrically, you place the second
+          arrow at the tip of the first, and the sum runs from the start to the end.
+      - id: arith-2
+        cue: scale
+        narration: >
+          Multiplying by a number stretches the arrow. Two times a vector is twice as long in the
+          same direction. Minus one flips it.
+      - id: arith-3
+        cue: length
+        equations: [length]
+        narration: >
+          How long is an arrow? Pythagoras. The vector three, four, has length the square root of
+          nine plus sixteen, which is the square root of twenty-five: five. In three dimensions the
+          same rule applies: one, two, two has length the square root of one plus four plus four,
+          which is three. And in a thousand dimensions, the rule does not change: square every
+          coordinate, add them up, take the square root.
+      - id: arith-4
+        cue: unit
+        narration: >
+          Divide a vector by its own length and you get a unit vector: the pure direction, with
+          length one. We will need that in a moment.
+
+  - id: dot
+    title: "The dot product: two definitions, one theorem"
+    scene: DotVec
+    beats:
+      - id: dot-1
+        cue: algebraic
+        equations: [dot_alg]
+        narration: >
+          Here is the first definition. Multiply matching coordinates, and add. Take a, which is
+          three, four, and b, which is four, minus three. Three times four is twelve. Four times
+          minus three is minus twelve. Twelve minus twelve. The dot product is zero.
+      - id: dot-2
+        cue: geometric
+        equations: [dot_geo]
+        narration: >
+          Here is the second definition, and it looks completely different. The length of a, times
+          the length of b, times the cosine of the angle between them. Look at the picture: a and b
+          are at right angles. The cosine of ninety degrees is zero. So again, the dot product is zero.
+      - id: dot-3
+        cue: second_example
+        narration: >
+          One more, where the answer is not zero. Take a, three, four, and c, two, one. Coordinates:
+          three times two, plus four times one. Six plus four. Ten. Now the geometry: the lengths are
+          five and the square root of five, and the angle between them is {angle_ac_deg:g} degrees,
+          whose cosine is {cos_ac:g}. Five, times root five, times {cos_ac:g}. Ten again.
+      - id: dot-4
+        cue: proof
+        equations: [cosines]
+        narration: >
+          That is no coincidence. It is a theorem, and the proof is one line. The law of cosines
+          says the squared length of a minus b equals the squared length of a, plus the squared
+          length of b, minus two, times the lengths, times the cosine. Expand the left side in
+          coordinates, cancel the squares, and what remains is exactly: coordinates multiplied and
+          added, equals lengths times cosine. Two definitions, one number.
+
+  - id: shadow
+    title: "Projection: the shadow"
+    scene: ShadowVec
+    beats:
+      - id: shadow-1
+        cue: shadow
+        equations: [proj]
+        narration: >
+          Now the picture that makes the dot product intuitive. Dot a with the unit vector along b,
+          and you get the length of a's shadow on b: the length of a, times the cosine. Watch the
+          angle sweep.
+      - id: shadow-2
+        cue: sweep
+        narration: >
+          When a lines up with b, the shadow is the whole of a, and the number is largest. As the
+          angle opens, the shadow shortens. At ninety degrees, there is no shadow at all: zero. Past
+          ninety, the shadow falls behind, and the number turns negative.
+      - id: shadow-3
+        cue: meaning
+        narration: >
+          So the sign answers one question, same side or opposite side, and the size answers another,
+          how much of a lies along b. That is the whole meaning of the dot product.
+
+  - id: cosine
+    title: "Cosine similarity: Salton, 1975"
+    scene: CosineVec
+    beats:
+      - id: cos-1
+        cue: divide
+        equations: [cosine]
+        narration: >
+          Divide the dot product by the two lengths, and the lengths cancel out. What is left is the
+          cosine of the angle: a number between minus one and one that cares only about direction.
+          This is cosine similarity.
+      - id: cos-2
+        cue: salton
+        narration: >
+          In nineteen seventy-five, Gerard Salton and his colleagues at Cornell proposed treating a
+          document as a vector: one coordinate per word, holding how often the word appears. A search
+          query is a vector too. The best document is the one whose angle to the query is smallest.
+      - id: cos-3
+        cue: docs
+        narration: >
+          Here are three short documents, as word-count vectors. The first two share the word
+          gradient and the word loss; their cosine is {cos_AB:g}. The third repeats chain rule and
+          nothing else; its cosine with the first is only {cos_AC:g}. Length does not fool it: a
+          document that says the same words three times points in the same direction.
+
+  - id: ai
+    title: "Where AI uses it"
+    scene: AIVec
+    beats:
+      - id: ai-1
+        cue: embeddings
+        narration: >
+          Modern A.I. does the same thing with learned coordinates. In twenty thirteen, Mikolov and
+          colleagues at Google trained vectors for words, and found that arithmetic on them works:
+          king, minus man, plus woman, lands nearest to queen. Here is a small space where that holds
+          exactly: the nearest vector by cosine is {analogy_top}.
+      - id: ai-2
+        cue: attention
+        equations: [attention]
+        narration: >
+          Inside a Transformer, every attention score is a dot product. A query vector asks; each key
+          vector answers; the score is the query dot the key, divided by the square root of the
+          dimension. High score, high agreement, more attention.
+      - id: ai-3
+        cue: neuron
+        equations: [neuron]
+        narration: >
+          And the humblest unit of all. A neuron multiplies each input by a weight and adds them up.
+          That weighted sum is a dot product: the weights dot the inputs, plus a bias. A layer with a
+          thousand neurons is a thousand dot products. Learning, as we saw last time, is adjusting
+          those weights.
+
+  - id: realtime
+    title: "Real time and industry"
+    scene: RealtimeVec
+    beats:
+      - id: rt-1
+        cue: lambert
+        equations: [lambert]
+        narration: >
+          Now the real world, in real time. In seventeen sixty, Johann Heinrich Lambert measured
+          how a matte surface reflects light, and found the cosine law: brightness is the dot
+          product of the surface normal and the direction to the light. A face turned toward the
+          light is bright; a face turned sideways is dim; a face turned away is dark.
+      - id: rt-2
+        cue: gpu
+        narration: >
+          Every pixel of every three-dimensional game you have ever played is lit with this one dot
+          product, billions of times a second, on the graphics processor. Here is a sphere shaded by
+          nothing but n dot l. Move the light, and every pixel recomputes.
+      - id: rt-3
+        cue: retrieval
+        narration: >
+          In industry, the same operation runs search and recommendation. Every product, document, or
+          song is stored as a vector. Your query becomes a vector. A vector database computes the
+          cosine against millions of items and returns the top few. Here is a catalogue of
+          {catalogue_n:,} items in {catalogue_d} dimensions; the query vector moves, and the ranking
+          follows it.
+      - id: rt-4
+        cue: work
+        narration: >
+          And in physics, where it began: work is force dot displacement. Push with ten newtons
+          along the floor, move three metres along and four metres up, and only the part of the
+          motion along the push counts: {work_j:g} joules.
+
+  - id: recap
+    title: "Recap: what, when and how"
+    scene: RecapVec
+    beats:
+      - id: recap-1
+        cue: what
+        narration: >
+          So. A vector is a list of numbers that is also an arrow. The dot product multiplies matching
+          coordinates and adds them, and that equals length times length times the cosine of the
+          angle. Its sign says same side or opposite; its size says how much.
+      - id: recap-2
+        cue: when_how
+        narration: >
+          When? Hamilton, Grassmann and Gibbs, between eighteen forty-three and eighteen eighty-four.
+          How is it used in A.I.? Every neuron, every embedding comparison, every attention score.
+          And in real time, every lit pixel on your screen. Next: matrices, the machines that move
+          whole spaces.

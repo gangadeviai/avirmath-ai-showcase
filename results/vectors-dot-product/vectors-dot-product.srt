@@ -1,0 +1,747 @@
+1
+00:00:00,299 --> 00:00:01,460
+What is a vector?
+
+2
+00:00:01,643 --> 00:00:04,350
+It is a list of numbers that is also an arrow.
+
+3
+00:00:04,533 --> 00:00:07,262
+Three and four, written as a column, is the same
+
+4
+00:00:07,124 --> 00:00:09,410
+thing as an arrow that goes three across and four
+
+5
+00:00:09,272 --> 00:00:09,729
+up.
+
+6
+00:00:09,875 --> 00:00:11,559
+And what is the dot product?
+
+7
+00:00:11,773 --> 00:00:14,400
+It is the one number that says how much two arrows
+
+8
+00:00:14,261 --> 00:00:14,843
+agree.
+
+9
+00:00:15,034 --> 00:00:17,707
+Positive when they point the same way, zero when
+
+10
+00:00:17,568 --> 00:00:20,365
+they are at right angles, negative when they oppose.
+
+11
+00:00:20,557 --> 00:00:23,388
+Every neuron, every embedding, every attention
+
+12
+00:00:23,250 --> 00:00:24,810
+score is a dot product.
+
+13
+00:00:25,000 --> 00:00:26,184
+Let us see why.
+
+14
+00:00:27,663 --> 00:00:30,404
+In eighteen forty-three, William Rowan Hamilton
+
+15
+00:00:30,265 --> 00:00:32,915
+invented quaternions to multiply directions in
+
+16
+00:00:32,776 --> 00:00:33,472
+space.
+
+17
+00:00:33,681 --> 00:00:36,672
+A year later, Hermann Grassmann published a general
+
+18
+00:00:36,533 --> 00:00:38,592
+algebra of extended quantities.
+
+19
+00:00:38,806 --> 00:00:41,104
+And between eighteen eighty-one and eighteen eighty-four,
+
+20
+00:00:41,181 --> 00:00:44,036
+Willard Gibbs, teaching at Yale, stripped the idea
+
+21
+00:00:43,897 --> 00:00:46,683
+down to what physicists needed: the vector, with
+
+22
+00:00:46,544 --> 00:00:48,411
+a dot product and a cross product.
+
+23
+00:00:48,613 --> 00:00:51,013
+His notation is the one we still use.
+
+24
+00:00:51,167 --> 00:00:53,192
+So a vector has three faces.
+
+25
+00:00:53,379 --> 00:00:54,677
+A point in space.
+
+26
+00:00:54,891 --> 00:00:57,199
+An arrow from the origin to that point.
+
+27
+00:00:57,414 --> 00:00:59,109
+And a column of coordinates.
+
+28
+00:00:59,300 --> 00:01:02,018
+Move the point, and the arrow and the numbers move
+
+29
+00:01:01,879 --> 00:01:02,507
+with it.
+
+30
+00:01:02,720 --> 00:01:04,018
+They are one object.
+
+31
+00:01:05,538 --> 00:01:08,347
+Adding two vectors means adding their coordinates.
+
+32
+00:01:08,525 --> 00:01:11,221
+Geometrically, you place the second arrow at the
+
+33
+00:01:11,082 --> 00:01:13,652
+tip of the first, and the sum runs from the start
+
+34
+00:01:13,514 --> 00:01:14,244
+to the end.
+
+35
+00:01:14,417 --> 00:01:17,067
+Multiplying by a number stretches the arrow.
+
+36
+00:01:17,250 --> 00:01:19,820
+Two times a vector is twice as long in the same
+
+37
+00:01:19,682 --> 00:01:20,502
+direction.
+
+38
+00:01:20,701 --> 00:01:22,260
+Minus one flips it.
+
+39
+00:01:22,458 --> 00:01:23,836
+How long is an arrow?
+
+40
+00:01:24,018 --> 00:01:25,077
+Pythagoras.
+
+41
+00:01:25,288 --> 00:01:28,131
+The vector three, four, has length the square root
+
+42
+00:01:27,992 --> 00:01:30,450
+of nine plus sixteen, which is the square root
+
+43
+00:01:30,310 --> 00:01:31,904
+of twenty-five: five.
+
+44
+00:01:32,117 --> 00:01:35,063
+In three dimensions the same rule applies: one,
+
+45
+00:01:35,083 --> 00:01:37,585
+two, two has length the square root of one plus
+
+46
+00:01:37,447 --> 00:01:39,268
+four plus four, which is three.
+
+47
+00:01:39,469 --> 00:01:41,937
+And in a thousand dimensions, the rule does not
+
+48
+00:01:41,799 --> 00:01:45,040
+change: square every coordinate, add them up, take
+
+49
+00:01:44,901 --> 00:01:45,824
+the square root.
+
+50
+00:01:46,000 --> 00:01:48,377
+Divide a vector by its own length and you get a
+
+51
+00:01:48,239 --> 00:01:51,309
+unit vector: the pure direction, with length one.
+
+52
+00:01:51,520 --> 00:01:53,250
+We will need that in a moment.
+
+53
+00:01:54,747 --> 00:01:56,544
+Here is the first definition.
+
+54
+00:01:56,722 --> 00:01:59,416
+Multiply matching coordinates, and add.
+
+55
+00:01:59,606 --> 00:02:03,255
+Take a, which is three, four, and b, which is four,
+
+56
+00:02:03,299 --> 00:02:04,153
+minus three.
+
+57
+00:02:04,336 --> 00:02:06,213
+Three times four is twelve.
+
+58
+00:02:06,393 --> 00:02:09,009
+Four times minus three is minus twelve.
+
+59
+00:02:09,189 --> 00:02:10,633
+Twelve minus twelve.
+
+60
+00:02:10,814 --> 00:02:12,566
+The dot product is zero.
+
+61
+00:02:12,750 --> 00:02:15,628
+Here is the second definition, and it looks completely
+
+62
+00:02:15,489 --> 00:02:16,207
+different.
+
+63
+00:02:16,420 --> 00:02:19,343
+The length of a, times the length of b, times the
+
+64
+00:02:19,205 --> 00:02:20,957
+cosine of the angle between them.
+
+65
+00:02:21,148 --> 00:02:24,150
+Look at the picture: a and b are at right angles.
+
+66
+00:02:24,364 --> 00:02:26,707
+The cosine of ninety degrees is zero.
+
+67
+00:02:26,898 --> 00:02:29,332
+So again, the dot product is zero.
+
+68
+00:02:29,542 --> 00:02:32,056
+One more, where the answer is not zero.
+
+69
+00:02:32,247 --> 00:02:35,919
+Take a, three, four, and c, two, one.
+
+70
+00:02:36,102 --> 00:02:39,627
+Coordinates: three times two, plus four times one.
+
+71
+00:02:39,815 --> 00:02:41,056
+Six plus four.
+
+72
+00:02:41,247 --> 00:02:41,817
+Ten.
+
+73
+00:02:42,019 --> 00:02:44,453
+Now the geometry: the lengths are five and the
+
+74
+00:02:44,315 --> 00:02:46,726
+square root of five, and the angle between them
+
+75
+00:02:46,587 --> 00:02:51,715
+is 26.6 degrees, whose cosine is 0.894.
+
+76
+00:02:51,781 --> 00:02:55,544
+Five, times root five, times 0.894.
+
+77
+00:02:55,406 --> 00:02:56,022
+Ten again.
+
+78
+00:02:56,208 --> 00:02:57,836
+That is no coincidence.
+
+79
+00:02:58,049 --> 00:03:00,586
+It is a theorem, and the proof is one line.
+
+80
+00:03:00,799 --> 00:03:03,052
+The law of cosines says the squared length of a
+
+81
+00:03:02,913 --> 00:03:05,711
+minus b equals the squared length of a, plus the
+
+82
+00:03:05,572 --> 00:03:08,586
+squared length of b, minus two, times the lengths,
+
+83
+00:03:08,628 --> 00:03:09,756
+times the cosine.
+
+84
+00:03:09,969 --> 00:03:12,711
+Expand the left side in coordinates, cancel the
+
+85
+00:03:12,572 --> 00:03:15,756
+squares, and what remains is exactly: coordinates
+
+86
+00:03:15,617 --> 00:03:18,734
+multiplied and added, equals lengths times cosine.
+
+87
+00:03:18,915 --> 00:03:21,076
+Two definitions, one number.
+
+88
+00:03:22,506 --> 00:03:25,497
+Now the picture that makes the dot product intuitive.
+
+89
+00:03:25,681 --> 00:03:28,365
+Dot a with the unit vector along b, and you get
+
+90
+00:03:28,226 --> 00:03:30,695
+the length of a's shadow on b: the length of a,
+
+91
+00:03:30,715 --> 00:03:31,865
+times the cosine.
+
+92
+00:03:32,078 --> 00:03:33,559
+Watch the angle sweep.
+
+93
+00:03:33,750 --> 00:03:36,286
+When a lines up with b, the shadow is the whole
+
+94
+00:03:36,148 --> 00:03:38,196
+of a, and the number is largest.
+
+95
+00:03:38,386 --> 00:03:41,104
+As the angle opens, the shadow shortens.
+
+96
+00:03:41,318 --> 00:03:44,661
+At ninety degrees, there is no shadow at all: zero.
+
+97
+00:03:44,852 --> 00:03:48,059
+Past ninety, the shadow falls behind, and the number
+
+98
+00:03:47,920 --> 00:03:48,968
+turns negative.
+
+99
+00:03:49,167 --> 00:03:52,112
+So the sign answers one question, same side or
+
+100
+00:03:51,974 --> 00:03:54,737
+opposite side, and the size answers another, how
+
+101
+00:03:54,599 --> 00:03:56,021
+much of a lies along b.
+
+102
+00:03:56,212 --> 00:03:58,658
+That is the whole meaning of the dot product.
+
+103
+00:04:00,091 --> 00:04:02,752
+Divide the dot product by the two lengths, and
+
+104
+00:04:02,614 --> 00:04:03,990
+the lengths cancel out.
+
+105
+00:04:04,197 --> 00:04:06,915
+What is left is the cosine of the angle: a number
+
+106
+00:04:06,776 --> 00:04:09,357
+between minus one and one that cares only about
+
+107
+00:04:09,219 --> 00:04:09,994
+direction.
+
+108
+00:04:10,177 --> 00:04:12,111
+This is cosine similarity.
+
+109
+00:04:12,292 --> 00:04:15,078
+In nineteen seventy-five, Gerard Salton and his
+
+110
+00:04:14,940 --> 00:04:17,351
+colleagues at Cornell proposed treating a document
+
+111
+00:04:17,212 --> 00:04:20,373
+as a vector: one coordinate per word, holding how
+
+112
+00:04:20,235 --> 00:04:21,521
+often the word appears.
+
+113
+00:04:21,704 --> 00:04:23,797
+A search query is a vector too.
+
+114
+00:04:24,008 --> 00:04:26,419
+The best document is the one whose angle to the
+
+115
+00:04:26,281 --> 00:04:27,703
+query is smallest.
+
+116
+00:04:27,875 --> 00:04:30,990
+Here are three short documents, as word-count vectors.
+
+117
+00:04:31,205 --> 00:04:33,638
+The first two share the word gradient and the word
+
+118
+00:04:33,500 --> 00:04:36,343
+loss; their cosine is 0.54.
+
+119
+00:04:36,557 --> 00:04:39,013
+The third repeats chain rule and nothing else;
+
+120
+00:04:39,148 --> 00:04:41,446
+its cosine with the first is only 0.
+
+121
+00:04:41,648 --> 00:04:44,343
+Length does not fool it: a document that says the
+
+122
+00:04:44,205 --> 00:04:46,980
+same words three times points in the same direction.
+
+123
+00:04:48,432 --> 00:04:49,286
+Modern A.I.
+
+124
+00:04:49,148 --> 00:04:51,445
+does the same thing with learned coordinates.
+
+125
+00:04:51,655 --> 00:04:54,361
+In twenty thirteen, Mikolov and colleagues at Google
+
+126
+00:04:54,223 --> 00:04:56,838
+trained vectors for words, and found that arithmetic
+
+127
+00:04:56,700 --> 00:05:00,418
+on them works: king, minus man, plus woman, lands
+
+128
+00:05:00,280 --> 00:05:01,248
+nearest to queen.
+
+129
+00:05:01,461 --> 00:05:04,020
+Here is a small space where that holds exactly:
+
+130
+00:05:04,155 --> 00:05:06,338
+the nearest vector by cosine is queen.
+
+131
+00:05:06,500 --> 00:05:09,412
+Inside a Transformer, every attention score is
+
+132
+00:05:09,273 --> 00:05:10,331
+a dot product.
+
+133
+00:05:10,545 --> 00:05:13,695
+A query vector asks; each key vector answers; the
+
+134
+00:05:13,557 --> 00:05:16,104
+score is the query dot the key, divided by the
+
+135
+00:05:15,966 --> 00:05:17,445
+square root of the dimension.
+
+136
+00:05:17,659 --> 00:05:20,412
+High score, high agreement, more attention.
+
+137
+00:05:20,583 --> 00:05:22,336
+And the humblest unit of all.
+
+138
+00:05:22,526 --> 00:05:25,347
+A neuron multiplies each input by a weight and
+
+139
+00:05:25,208 --> 00:05:26,062
+adds them up.
+
+140
+00:05:26,265 --> 00:05:29,051
+That weighted sum is a dot product: the weights
+
+141
+00:05:28,913 --> 00:05:30,915
+dot the inputs, plus a bias.
+
+142
+00:05:31,106 --> 00:05:33,904
+A layer with a thousand neurons is a thousand dot
+
+143
+00:05:33,765 --> 00:05:34,540
+products.
+
+144
+00:05:34,731 --> 00:05:37,756
+Learning, as we saw last time, is adjusting those
+
+145
+00:05:37,617 --> 00:05:38,279
+weights.
+
+146
+00:05:39,747 --> 00:05:41,930
+Now the real world, in real time.
+
+147
+00:05:42,140 --> 00:05:45,028
+In seventeen sixty, Johann Heinrich Lambert measured
+
+148
+00:05:44,890 --> 00:05:47,358
+how a matte surface reflects light, and found the
+
+149
+00:05:47,219 --> 00:05:49,949
+cosine law: brightness is the dot product of the
+
+150
+00:05:49,810 --> 00:05:52,096
+surface normal and the direction to the light.
+
+151
+00:05:52,287 --> 00:05:54,983
+A face turned toward the light is bright; a face
+
+152
+00:05:54,844 --> 00:05:57,994
+turned sideways is dim; a face turned away is dark.
+
+153
+00:05:58,167 --> 00:06:00,635
+Every pixel of every three-dimensional game you
+
+154
+00:06:00,497 --> 00:06:02,998
+have ever played is lit with this one dot product,
+
+155
+00:06:03,133 --> 00:06:05,942
+billions of times a second, on the graphics processor.
+
+156
+00:06:06,156 --> 00:06:08,669
+Here is a sphere shaded by nothing but n dot l.
+
+157
+00:06:08,531 --> 00:06:11,146
+Move the light, and every pixel recomputes.
+
+158
+00:06:11,333 --> 00:06:14,210
+In industry, the same operation runs search and
+
+159
+00:06:14,072 --> 00:06:15,075
+recommendation.
+
+160
+00:06:15,265 --> 00:06:18,415
+Every product, document, or song is stored as a
+
+161
+00:06:18,276 --> 00:06:18,915
+vector.
+
+162
+00:06:19,128 --> 00:06:20,915
+Your query becomes a vector.
+
+163
+00:06:21,128 --> 00:06:24,154
+A vector database computes the cosine against millions
+
+164
+00:06:24,015 --> 00:06:26,188
+of items and returns the top few.
+
+165
+00:06:26,401 --> 00:06:30,085
+Here is a catalogue of 10,000 items in 64 dimensions;
+
+166
+00:06:30,231 --> 00:06:32,734
+the query vector moves, and the ranking follows
+
+167
+00:06:32,594 --> 00:06:33,051
+it.
+
+168
+00:06:33,250 --> 00:06:36,332
+And in physics, where it began: work is force dot
+
+169
+00:06:36,193 --> 00:06:37,127
+displacement.
+
+170
+00:06:37,310 --> 00:06:39,926
+Push with ten newtons along the floor, move three
+
+171
+00:06:39,788 --> 00:06:42,528
+metres along and four metres up, and only the part
+
+172
+00:06:42,390 --> 00:06:45,187
+of the motion along the push counts: 30 joules.
+
+173
+00:06:46,640 --> 00:06:47,245
+So.
+
+174
+00:06:47,431 --> 00:06:50,558
+A vector is a list of numbers that is also an arrow.
+
+175
+00:06:50,772 --> 00:06:53,387
+The dot product multiplies matching coordinates
+
+176
+00:06:53,249 --> 00:06:55,922
+and adds them, and that equals length times length
+
+177
+00:06:55,783 --> 00:06:57,411
+times the cosine of the angle.
+
+178
+00:06:57,624 --> 00:07:00,808
+Its sign says same side or opposite; its size says
+
+179
+00:07:00,669 --> 00:07:01,433
+how much.
+
+180
+00:07:01,625 --> 00:07:02,207
+When?
+
+181
+00:07:02,420 --> 00:07:05,593
+Hamilton, Grassmann and Gibbs, between eighteen
+
+182
+00:07:05,455 --> 00:07:07,298
+forty-three and eighteen eighty-four.
+
+183
+00:07:07,500 --> 00:07:09,059
+How is it used in A.I.?
+
+184
+00:07:09,250 --> 00:07:12,286
+Every neuron, every embedding comparison, every
+
+185
+00:07:12,148 --> 00:07:13,184
+attention score.
+
+186
+00:07:13,398 --> 00:07:16,343
+And in real time, every lit pixel on your screen.
+
+187
+00:07:16,545 --> 00:07:20,252
+Next: matrices, the machines that move whole spaces.

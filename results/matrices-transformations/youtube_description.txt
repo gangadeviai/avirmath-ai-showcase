@@ -1,0 +1,31 @@
+Every layer of a neural network is a matrix times the input vector plus a bias; attention computes all query-key dot products at once as Q times K transpose; an image is a matrix of pixel values and a convolution is a matrix product in disguise. A matrix is best understood as a linear transformation that moves the whole space, with its columns recording where the basis vectors land; matrix multiplication composes transformations, the determinant measures how area scales, and eigenvectors are the directions a matrix only stretches, which is what limits the learning rate. Google's PageRank is an eigenvector, Netflix-style recommenders factorise the user-by-film matrix, and LoRA fine-tunes large language models with low-rank matrices.
+
+CHAPTERS
+0:00 The matrix inside every layer
+0:40 A matrix times a vector
+1:26 Multiplication is composition
+2:17 Determinant and inverse
+2:51 Eigenvectors: the directions that only stretch
+3:57 Inside a neural network and a Transformer
+5:03 Industry: search, recommendation and cheap fine-tuning
+6:26 Recap: what, where in AI, and how to use it
+
+QUESTIONS ANSWERED IN THIS VIDEO
+- How are matrices used in neural networks?
+- How does attention use matrices?
+- What does a matrix do to a vector?
+- Why is matrix multiplication done the way it is?
+- What are eigenvectors and why do they matter for training?
+- What is LoRA?
+- Where else are matrices used in industry?
+
+SOURCES
+- A. Radford et al., Language Models are Unsupervised Multitask Learners (GPT-2), 2019: 12 layers, 768-dimensional, 12 heads, 124M parameters
+- E. J. Hu et al., LoRA: Low-Rank Adaptation of Large Language Models, 2021
+- S. Brin and L. Page, The anatomy of a large-scale hypertextual Web search engine, 1998 (PageRank)
+- Netflix Prize, 2006-2009: 100.48 M ratings, 480,189 users, 17,770 films; RMSE 0.9514 to 0.8572
+- A. Vaswani et al., Attention Is All You Need, 2017 (scaled dot-product attention)
+
+All mathematics in this video is computed and independently tested; nothing is drawn by hand.
+
+#matricesinmachinelearning #linearalgebrafordeeplearning #matrixmultiplicationneuralnetwork #howattentionworksQKtranspose #matrixaslineartransformation

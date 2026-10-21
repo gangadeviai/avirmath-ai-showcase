@@ -1,0 +1,875 @@
+1
+00:00:00,309 --> 00:00:02,829
+Let me start in a dermatology clinic.
+
+2
+00:00:03,054 --> 00:00:05,975
+A patient comes in with a red, scaly rash, and
+
+3
+00:00:05,837 --> 00:00:08,310
+six different diseases can look almost identical
+
+4
+00:00:08,172 --> 00:00:11,541
+on the skin: psoriasis, seborrheic dermatitis,
+
+5
+00:00:11,639 --> 00:00:15,480
+lichen planus, pityriasis rosea, chronic dermatitis
+
+6
+00:00:15,424 --> 00:00:17,449
+and pityriasis rubra pilaris.
+
+7
+00:00:17,653 --> 00:00:20,456
+Telling them apart matters, because the treatments
+
+8
+00:00:20,318 --> 00:00:20,893
+differ.
+
+9
+00:00:21,120 --> 00:00:24,890
+The data we will use is real: 366 patients from
+
+10
+00:00:24,752 --> 00:00:27,461
+a university hospital, published in Artificial
+
+11
+00:00:27,323 --> 00:00:29,831
+Intelligence in Medicine in nineteen ninety-eight,
+
+12
+00:00:29,976 --> 00:00:32,838
+with 34 findings recorded for each patient and
+
+13
+00:00:32,700 --> 00:00:34,359
+the confirmed diagnosis.
+
+14
+00:00:34,542 --> 00:00:36,591
+Look at what the table contains.
+
+15
+00:00:36,783 --> 00:00:39,232
+Twelve of the findings are clinical, things the
+
+16
+00:00:39,094 --> 00:00:42,192
+doctor sees and asks, such as itching, scaling
+
+17
+00:00:42,054 --> 00:00:45,021
+and family history, each graded from zero to three.
+
+18
+00:00:45,214 --> 00:00:48,276
+Twenty-two come from a biopsy examined under the
+
+19
+00:00:48,139 --> 00:00:49,079
+microscope.
+
+20
+00:00:49,304 --> 00:00:52,225
+The target column has six possible values, not
+
+21
+00:00:52,087 --> 00:00:55,126
+two, and that is exactly the situation softmax
+
+22
+00:00:54,988 --> 00:00:55,880
+was made for.
+
+23
+00:00:56,108 --> 00:01:00,350
+We will train on 293 patients and keep 73 hidden
+
+24
+00:01:00,212 --> 00:01:01,105
+for the test.
+
+25
+00:01:02,559 --> 00:01:05,185
+So which output layer, and which loss?
+
+26
+00:01:05,410 --> 00:01:08,143
+If the answer is one of two, a loan going bad or
+
+27
+00:01:08,004 --> 00:01:10,878
+not, the sigmoid and the two-class cross-entropy
+
+28
+00:01:10,740 --> 00:01:12,565
+from the regression lesson are enough.
+
+29
+00:01:12,792 --> 00:01:15,642
+If the answer is one of several, six diagnoses
+
+30
+00:01:15,504 --> 00:01:18,331
+or a thousand image classes, you need softmax,
+
+31
+00:01:18,370 --> 00:01:20,784
+which turns a score per class into a probability
+
+32
+00:01:20,646 --> 00:01:23,307
+per class, with cross-entropy generalised to many
+
+33
+00:01:23,169 --> 00:01:23,956
+classes.
+
+34
+00:01:24,183 --> 00:01:26,610
+And if the answer is one of fifty thousand, the
+
+35
+00:01:26,471 --> 00:01:28,909
+next word a language model should write, it is
+
+36
+00:01:28,771 --> 00:01:31,739
+still softmax, just with fifty thousand bars.
+
+37
+00:01:31,958 --> 00:01:34,538
+The second question is whether the probabilities
+
+38
+00:01:34,399 --> 00:01:35,976
+themselves will be used.
+
+39
+00:01:36,203 --> 00:01:38,688
+If a doctor or a screening programme acts on the
+
+40
+00:01:38,550 --> 00:01:41,354
+number, ninety percent must mean ninety percent,
+
+41
+00:01:41,498 --> 00:01:44,242
+so calibration has to be checked before deployment.
+
+42
+00:01:44,470 --> 00:01:47,745
+If the inputs are images or free text, a convolutional
+
+43
+00:01:47,607 --> 00:01:49,832
+or Transformer network will learn the features,
+
+44
+00:01:49,977 --> 00:01:52,580
+but its last layer is this same softmax with this
+
+45
+00:01:52,441 --> 00:01:55,044
+same loss, so everything we build here carries
+
+46
+00:01:54,906 --> 00:01:55,965
+over unchanged.
+
+47
+00:01:57,446 --> 00:02:00,261
+Let us build softmax on three scores small enough
+
+48
+00:02:00,123 --> 00:02:03,504
+to do by hand: two, one, and zero point one.
+
+49
+00:02:03,694 --> 00:02:06,002
+Step one: raise e to each.
+
+50
+00:02:06,228 --> 00:02:11,142
+e to the two is 7.39, e to the one is 2.72, and
+
+51
+00:02:11,004 --> 00:02:13,607
+e to the zero point one is 1.11.
+
+52
+00:02:13,811 --> 00:02:16,791
+Every bar is now positive, and the gaps between
+
+53
+00:02:16,653 --> 00:02:17,605
+them have grown.
+
+54
+00:02:17,792 --> 00:02:21,597
+Step two: divide by the total, 11.21.
+
+55
+00:02:21,825 --> 00:02:27,128
+The shares are 66 percent, 24 percent, and 10 percent.
+
+56
+00:02:26,990 --> 00:02:30,937
+They add to one hundred, and the order is preserved.
+
+57
+00:02:31,047 --> 00:02:33,248
+That is softmax: exponentiate, then normalise.
+
+58
+00:02:33,417 --> 00:02:36,232
+Divide the scores by a temperature first, and you
+
+59
+00:02:36,094 --> 00:02:38,260
+control how decisive the model is.
+
+60
+00:02:38,453 --> 00:02:42,565
+Cold, at zero point three, the winner takes 96
+
+61
+00:02:42,791 --> 00:02:43,318
+percent.
+
+62
+00:02:43,345 --> 00:02:47,740
+Hot, at five, the shares flatten to 40, 33 and
+
+63
+00:02:47,956 --> 00:02:48,436
+27.
+
+64
+00:02:48,298 --> 00:02:51,112
+Same scores, different confidence, and we will
+
+65
+00:02:50,975 --> 00:02:53,247
+meet this dial again when we calibrate a model.
+
+66
+00:02:53,458 --> 00:02:56,026
+One property every library relies on.
+
+67
+00:02:56,241 --> 00:02:59,387
+Add the same constant to all the scores, and softmax
+
+68
+00:02:59,248 --> 00:03:02,040
+does not change, because the constant cancels top
+
+69
+00:03:01,901 --> 00:03:02,595
+and bottom.
+
+70
+00:03:02,798 --> 00:03:06,050
+So before exponentiating, subtract the largest
+
+71
+00:03:05,911 --> 00:03:06,474
+score.
+
+72
+00:03:06,701 --> 00:03:09,705
+Without that, e to the seven hundred and ten overflows
+
+73
+00:03:09,567 --> 00:03:12,489
+a computer's number format; with it, the biggest
+
+74
+00:03:12,350 --> 00:03:14,021
+exponent is always zero.
+
+75
+00:03:14,208 --> 00:03:17,247
+And with just two classes, softmax collapses to
+
+76
+00:03:17,109 --> 00:03:19,936
+a function you have met: the sigmoid of the difference
+
+77
+00:03:19,798 --> 00:03:20,903
+of the two scores.
+
+78
+00:03:21,107 --> 00:03:24,193
+Logistic regression is softmax with two bars.
+
+79
+00:03:25,654 --> 00:03:26,712
+Now the loss.
+
+80
+00:03:26,936 --> 00:03:29,681
+The surprise of an event with probability p is
+
+81
+00:03:29,542 --> 00:03:30,801
+minus the log of p.
+
+82
+00:03:30,663 --> 00:03:32,499
+Certain, zero surprise.
+
+83
+00:03:32,726 --> 00:03:35,565
+A coin flip, 0.693.
+
+84
+00:03:35,792 --> 00:03:38,207
+A one-in-ten event, 2.3.
+
+85
+00:03:38,401 --> 00:03:40,945
+Cross-entropy charges the model the surprise of
+
+86
+00:03:40,806 --> 00:03:43,857
+the true answer, and nothing else: minus the log
+
+87
+00:03:43,719 --> 00:03:45,839
+of the probability it gave to the truth.
+
+88
+00:03:46,000 --> 00:03:49,334
+Our model said 66 percent for the first class,
+
+89
+00:03:49,196 --> 00:03:51,138
+and that class is the truth.
+
+90
+00:03:51,000 --> 00:03:56,633
+The loss is minus the log of 0.659, which is 0.417.
+
+91
+00:03:56,495 --> 00:03:58,957
+Had it said ten percent, the loss would have been
+
+92
+00:03:58,818 --> 00:04:02,082
+two point three; had it said ninety-nine, almost
+
+93
+00:04:02,276 --> 00:04:03,122
+nothing.
+
+94
+00:04:02,983 --> 00:04:05,208
+Confident and right is cheap.
+
+95
+00:04:05,070 --> 00:04:06,517
+Confident and wrong is ruinous.
+
+96
+00:04:06,708 --> 00:04:09,028
+The name comes from information theory.
+
+97
+00:04:09,222 --> 00:04:12,131
+Cross-entropy equals the entropy of the truth plus
+
+98
+00:04:11,993 --> 00:04:14,361
+the Kullback-Leibler divergence from the truth
+
+99
+00:04:14,222 --> 00:04:15,221
+to the prediction.
+
+100
+00:04:15,434 --> 00:04:18,167
+For a single correct label the entropy is zero,
+
+101
+00:04:18,288 --> 00:04:21,104
+so minimising cross-entropy is exactly minimising
+
+102
+00:04:20,965 --> 00:04:23,521
+the divergence: making the prediction match the
+
+103
+00:04:23,383 --> 00:04:24,005
+truth.
+
+104
+00:04:25,488 --> 00:04:28,114
+Here is the reason these two are always paired.
+
+105
+00:04:28,315 --> 00:04:31,201
+Differentiate the loss with respect to the scores.
+
+106
+00:04:31,428 --> 00:04:34,113
+The derivative of softmax is messy on its own,
+
+107
+00:04:34,270 --> 00:04:36,932
+p i times delta i j minus p j.
+
+108
+00:04:37,126 --> 00:04:39,788
+But push it through minus the log, and everything
+
+109
+00:04:39,650 --> 00:04:40,507
+cancels.
+
+110
+00:04:40,733 --> 00:04:44,372
+The gradient is p minus y: prediction minus truth.
+
+111
+00:04:44,583 --> 00:04:49,603
+With our numbers: the prediction is 0.659, 0.242,
+
+112
+00:04:49,736 --> 00:04:53,720
+0.099; the truth is one, zero, zero.
+
+113
+00:04:53,934 --> 00:05:00,488
+So the gradient is -0.341, 0.242, 0.099.
+
+114
+00:05:00,681 --> 00:05:03,390
+Push the true class's score up, push the others
+
+115
+00:05:03,252 --> 00:05:06,327
+down, each by exactly how much it was over-believed.
+
+116
+00:05:06,500 --> 00:05:08,902
+Take four gradient steps on the scores and the
+
+117
+00:05:08,764 --> 00:05:12,840
+true class's share rises to 0.885; the loss falls
+
+118
+00:05:12,703 --> 00:05:16,002
+from 0.417 to 0.122.
+
+119
+00:05:16,227 --> 00:05:18,865
+This is the line where backpropagation begins in
+
+120
+00:05:18,727 --> 00:05:21,613
+every classifier: the error signal at the output
+
+121
+00:05:21,474 --> 00:05:23,145
+is simply p minus y.
+
+122
+00:05:24,613 --> 00:05:25,871
+Now the real job.
+
+123
+00:05:26,096 --> 00:05:29,146
+We standardise the 34 findings, give each of the
+
+124
+00:05:29,008 --> 00:05:31,705
+six diseases its own row of weights, and train
+
+125
+00:05:31,567 --> 00:05:34,359
+by gradient descent on exactly the loss and gradient
+
+126
+00:05:34,221 --> 00:05:35,290
+we just derived.
+
+127
+00:05:35,518 --> 00:05:37,943
+The mean cross-entropy on the training patients
+
+128
+00:05:37,806 --> 00:05:41,528
+falls from 1.792, which is the log of six, the
+
+129
+00:05:41,391 --> 00:05:44,170
+loss of pure guessing, to 0.02.
+
+130
+00:05:44,333 --> 00:05:45,345
+Did it work?
+
+131
+00:05:45,538 --> 00:05:48,471
+On the 73 patients the model has never seen it
+
+132
+00:05:48,333 --> 00:05:52,846
+is right 71 times, 97 percent, and the correct
+
+133
+00:05:52,708 --> 00:05:54,754
+diagnosis is always in its top two.
+
+134
+00:05:54,616 --> 00:05:58,139
+The original authors reported about 96.2 percent
+
+135
+00:05:58,000 --> 00:06:00,368
+with their own method in nineteen ninety-eight,
+
+136
+00:06:00,229 --> 00:06:02,868
+so a softmax regression with the right loss is
+
+137
+00:06:02,729 --> 00:06:04,884
+already at the published standard.
+
+138
+00:06:04,746 --> 00:06:07,455
+The confusion matrix shows where the few mistakes
+
+139
+00:06:07,316 --> 00:06:10,214
+fall, and even the rarest disease, with only 20
+
+140
+00:06:10,076 --> 00:06:11,937
+patients in the whole set, is recognised.
+
+141
+00:06:12,125 --> 00:06:15,153
+Here is one real patient from the test set, aged
+
+142
+00:06:15,014 --> 00:06:15,919
+48.
+
+143
+00:06:16,146 --> 00:06:19,303
+The model gives 53 percent to chronic dermatitis
+
+144
+00:06:19,165 --> 00:06:23,159
+and 46 percent to pityriasis rosea, a close call,
+
+145
+00:06:23,021 --> 00:06:26,461
+and the confirmed diagnosis is chronic dermatitis.
+
+146
+00:06:26,323 --> 00:06:29,798
+That is the readout a clinician wants: not a single
+
+147
+00:06:29,660 --> 00:06:32,546
+label, but the probabilities, so that a near tie
+
+148
+00:06:32,408 --> 00:06:34,198
+is visible and a second test can be ordered.
+
+149
+00:06:35,666 --> 00:06:38,316
+At enterprise scale the same layer sits at the
+
+150
+00:06:38,177 --> 00:06:39,884
+end of much bigger networks.
+
+151
+00:06:40,085 --> 00:06:42,488
+Google's lung-cancer screening model, published
+
+152
+00:06:42,349 --> 00:06:44,928
+in Nature Medicine in twenty nineteen, reads a
+
+153
+00:06:44,790 --> 00:06:45,742
+chest C.T.
+
+154
+00:06:45,604 --> 00:06:47,983
+with a three-dimensional convolutional network
+
+155
+00:06:47,844 --> 00:06:50,318
+and ends in a softmax over two outcomes.
+
+156
+00:06:50,545 --> 00:06:54,045
+It reached an area under the curve of 94.4 percent
+
+157
+00:06:53,906 --> 00:06:57,936
+on 6,716 scans from the National Lung Screening
+
+158
+00:06:58,092 --> 00:07:01,026
+Trial, and without a prior scan it made 11 percent
+
+159
+00:07:00,887 --> 00:07:03,950
+fewer false positives and 5 percent fewer false
+
+160
+00:07:03,811 --> 00:07:06,367
+negatives than six radiologists.
+
+161
+00:07:06,229 --> 00:07:08,619
+The probability from that softmax sets who is called
+
+162
+00:07:08,021 --> 00:07:08,619
+back.
+
+163
+00:07:08,833 --> 00:07:12,250
+And a language model is a classifier over its vocabulary.
+
+164
+00:07:12,444 --> 00:07:17,771
+GPT-two ends in a softmax over 50,257 tokens, trained
+
+165
+00:07:17,632 --> 00:07:20,636
+by cross-entropy on the next word; e to that loss
+
+166
+00:07:20,498 --> 00:07:23,006
+is the perplexity quoted in every model report,
+
+167
+00:07:23,139 --> 00:07:25,188
+and a temperature divides the scores before the
+
+168
+00:07:25,050 --> 00:07:27,818
+softmax to make the model more or less decisive.
+
+169
+00:07:28,019 --> 00:07:30,658
+Same formula, fifty thousand bars.
+
+170
+00:07:32,154 --> 00:07:33,814
+Now, when it fails.
+
+171
+00:07:34,026 --> 00:07:36,039
+First, over-confidence.
+
+172
+00:07:36,233 --> 00:07:38,765
+Train the same model for much longer without any
+
+173
+00:07:38,627 --> 00:07:41,336
+regularisation and its average confidence creeps
+
+174
+00:07:41,198 --> 00:07:45,334
+up to 98.7 percent while its accuracy slips to
+
+175
+00:07:45,502 --> 00:07:49,166
+96 percent; the calibration error more than doubles,
+
+176
+00:07:49,028 --> 00:07:51,700
+from 0.018 to 0.041.
+
+177
+00:07:51,561 --> 00:07:54,070
+Large deep networks do this far more severely,
+
+178
+00:07:53,932 --> 00:07:56,676
+which is why temperature scaling, a single number
+
+179
+00:07:56,538 --> 00:07:59,199
+dividing the scores, is fitted on held-out data
+
+180
+00:07:59,061 --> 00:08:00,650
+before a medical model is deployed.
+
+181
+00:08:00,833 --> 00:08:03,377
+Second, the inputs you will not have.
+
+182
+00:08:03,571 --> 00:08:06,387
+Train on the twelve clinical findings alone, as
+
+183
+00:08:06,248 --> 00:08:09,228
+in a clinic that cannot do a biopsy, and accuracy
+
+184
+00:08:09,090 --> 00:08:12,009
+falls from 97 to 92 percent.
+
+185
+00:08:11,871 --> 00:08:14,486
+A model is only as good as the inputs available
+
+186
+00:08:14,347 --> 00:08:17,139
+at the moment of the decision, so check which columns
+
+187
+00:08:17,000 --> 00:08:18,624
+will actually exist in production.
+
+188
+00:08:18,833 --> 00:08:20,599
+Third, label noise.
+
+189
+00:08:20,814 --> 00:08:23,441
+Flip twenty percent of the training diagnoses at
+
+190
+00:08:23,302 --> 00:08:25,906
+random, the kind of error that creeps into real
+
+191
+00:08:25,767 --> 00:08:28,971
+records, and the test accuracy drops from 97 to
+
+192
+00:08:28,833 --> 00:08:31,191
+86 percent.
+
+193
+00:08:31,052 --> 00:08:33,455
+Cross-entropy trusts every label completely, so
+
+194
+00:08:33,316 --> 00:08:35,919
+the quality of the labels is the ceiling on the
+
+195
+00:08:35,321 --> 00:08:35,919
+model.
+
+196
+00:08:36,083 --> 00:08:38,038
+Fourth, the hidden second.
+
+197
+00:08:38,265 --> 00:08:40,974
+The top label hides how close the race was.
+
+198
+00:08:41,201 --> 00:08:44,406
+In our small test set one patient had two diseases
+
+199
+00:08:44,267 --> 00:08:46,752
+within a few points of each other, and in a large
+
+200
+00:08:46,614 --> 00:08:48,356
+deployment that will be hundreds.
+
+201
+00:08:48,571 --> 00:08:51,787
+Report the probabilities, flag the near ties, and
+
+202
+00:08:51,649 --> 00:08:52,849
+let a person look.
+
+203
+00:08:54,321 --> 00:08:56,145
+So here is the checklist.
+
+204
+00:08:56,337 --> 00:09:00,602
+Two answers, sigmoid; several, softmax; thousands,
+
+205
+00:09:00,676 --> 00:09:01,876
+still softmax.
+
+206
+00:09:02,077 --> 00:09:05,128
+Subtract the maximum before exponentiating.
+
+207
+00:09:05,332 --> 00:09:08,454
+Train with cross-entropy, whose gradient is prediction
+
+208
+00:09:08,316 --> 00:09:09,373
+minus truth.
+
+209
+00:09:09,568 --> 00:09:12,076
+Judge the model on patients it has never seen,
+
+210
+00:09:12,186 --> 00:09:15,166
+with accuracy, the confusion matrix and the top-two
+
+211
+00:09:15,028 --> 00:09:15,603
+rate.
+
+212
+00:09:15,792 --> 00:09:18,807
+Then check the four failures: calibrate the confidence
+
+213
+00:09:18,669 --> 00:09:21,484
+on held-out data, train only on inputs that will
+
+214
+00:09:21,346 --> 00:09:24,550
+exist at decision time, audit the labels, and report
+
+215
+00:09:24,412 --> 00:09:26,649
+the probabilities rather than a single label.
+
+216
+00:09:26,843 --> 00:09:29,976
+Do that, and you have built what a diagnostic model
+
+217
+00:09:29,838 --> 00:09:31,710
+and a language model both end with.
+
+218
+00:09:31,912 --> 00:09:35,010
+Next: linear and logistic regression, where we
+
+219
+00:09:34,872 --> 00:09:36,767
+trace this neuron to its root.

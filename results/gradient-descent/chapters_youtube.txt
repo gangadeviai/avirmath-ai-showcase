@@ -1,0 +1,8 @@
+0:00 What is gradient descent?
+0:20 Paris, 1847: Cauchy's idea
+1:23 The mathematics, step by step
+2:28 The learning rate: how big a step?
+3:13 Stanford, 1960: Widrow, Hoff and stochastic gradient descent
+3:50 In industry: the adaptive noise canceller
+4:41 Today: how gradient descent trains neural networks
+5:13 Recap: what, when and how

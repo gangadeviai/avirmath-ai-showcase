@@ -1,0 +1,5 @@
+TITLE
+What Is a Vector, and What Is the Dot Product? The Geometry Inside Every AI Model
+
+TAGS
+dot product, what is a vector, scalar product, cosine similarity, projection, vector length, embeddings, word2vec, attention scores, Lambert shading, vector search, semantic search, Gibbs vector analysis, machine learning mathematics

@@ -1,0 +1,29 @@
+Backpropagation is the algorithm that computes how much a neural network's error changes with respect to every weight, in a single backward pass, by applying the chain rule from the output back to the input. Published for neural networks by Rumelhart, Hinton and Williams in 1986, it supplies the gradient that gradient descent uses to train every modern network.
+
+CHAPTERS
+0:00 What is backpropagation?
+0:18 The problem: one weight at a time
+0:47 The chain rule, seen
+1:10 The mathematics, worked by hand
+2:52 Why backwards
+3:32 In industry: reading handwritten digits
+4:07 Today: autograd and the vanishing gradient
+4:40 Recap: what, when and how
+
+QUESTIONS ANSWERED IN THIS VIDEO
+- What is backpropagation in simple terms?
+- Is backpropagation the same as gradient descent?
+- Who invented backpropagation, and when?
+- Why is it called back-propagation?
+- Why does backpropagation need the chain rule?
+- What is the vanishing gradient problem?
+
+SOURCES
+- S. Linnainmaa, master's thesis, University of Helsinki, 1970 (reverse-mode automatic differentiation)
+- P. Werbos, Beyond Regression, PhD thesis, Harvard University, 1974
+- D. E. Rumelhart, G. E. Hinton, R. J. Williams, Learning representations by back-propagating errors, Nature 323, 1986
+- Y. LeCun et al., Backpropagation applied to handwritten zip code recognition, Neural Computation, 1989
+
+All mathematics in this video is computed and independently tested; nothing is drawn by hand.
+
+#backpropagation #whatisbackpropagation #chainrule #gradientofaneuralnetwork #reverse-modeautomaticdifferentiation

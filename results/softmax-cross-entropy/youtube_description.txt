@@ -1,0 +1,31 @@
+Use a sigmoid for a yes-or-no answer and softmax when the answer is one of several classes: softmax turns the network's score per class into a probability per class, and cross-entropy is the loss that trains it, charging the model the surprise of the true class; its gradient is simply the predicted probabilities minus the one-hot truth. This lesson trains that layer on 366 real dermatology patients with six possible diagnoses (97 percent on held-out patients, at the level of the original 1998 paper), shows the same layer at the end of Google's lung-cancer screening network (Nature Medicine 2019) and of GPT-2's next-token prediction, and demonstrates the four practical failures: over-confidence and calibration, missing inputs at decision time, label noise, and the hidden second-best class.
+
+CHAPTERS
+0:00 A real decision and its data
+1:02 Which output layer, when
+1:57 Softmax, by hand
+3:25 Cross-entropy, by hand
+4:25 The gradient: prediction minus truth
+5:24 Softmax on a real job: six diagnoses
+6:35 At enterprise scale: a screening network and a language model
+7:31 When it fails: four things to check
+8:54 The checklist
+
+QUESTIONS ANSWERED IN THIS VIDEO
+- When do I need softmax instead of a sigmoid?
+- What does cross-entropy measure?
+- How well does softmax regression do on the dermatology dataset?
+- What is calibration and why does it matter in medicine?
+- How does a lung-cancer screening model use softmax?
+- What are the main ways a softmax classifier fails in practice?
+
+SOURCES
+- H. A. Guvenir, G. Demiroz, N. Ilter, Learning differential diagnosis of erythemato-squamous diseases using voting feature intervals, Artificial Intelligence in Medicine 13(3), 147-165, 1998; UCI Dermatology dataset (CC BY 4.0), 366 patients, 34 attributes, 6 classes; the 96.2 percent figure is as reported by later studies citing the paper
+- D. Ardila et al., End-to-end lung cancer screening with three-dimensional deep learning on low-dose chest computed tomography, Nature Medicine 25, 954-961 (2019): 94.4% AUC on 6,716 NLST cases; 11% fewer false positives and 5% fewer false negatives than six radiologists without prior imaging
+- C. Guo, G. Pleiss, Y. Sun, K. Q. Weinberger, On Calibration of Modern Neural Networks, ICML 2017 (temperature scaling, expected calibration error)
+- A. Radford et al., Language Models are Unsupervised Multitask Learners (GPT-2), 2019: byte-pair vocabulary of 50,257 tokens
+- J. S. Bridle, Probabilistic interpretation of feedforward classification network outputs, 1989/1990 (the name 'softmax')
+
+All mathematics in this video is computed and independently tested; nothing is drawn by hand.
+
+#softmaxexplainedmachinelearning #cross-entropylossdeeplearning #multi-classclassificationmedicaldiagnosis #dermatologydatasetsoftmaxregression #UCIdermatologymachinelearning

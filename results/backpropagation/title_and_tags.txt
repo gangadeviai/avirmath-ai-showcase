@@ -1,0 +1,5 @@
+TITLE
+What Is Backpropagation? The Chain Rule That Trains Every Neural Network
+
+TAGS
+backpropagation, what is backpropagation, chain rule, gradient of a neural network, reverse-mode automatic differentiation, delta rule, vanishing gradient, Rumelhart Hinton Williams 1986, Linnainmaa 1970, autograd, how neural networks learn, machine learning mathematics

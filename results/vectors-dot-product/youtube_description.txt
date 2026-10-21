@@ -1,0 +1,32 @@
+The dot product of two vectors is the sum of the products of their matching coordinates, which equals the product of their lengths times the cosine of the angle between them. It measures how much two directions agree, and it is the operation inside neurons, embeddings, cosine similarity, attention scores and real-time lighting.
+
+CHAPTERS
+0:00 What is a vector? What is the dot product?
+0:27 Where the arrow came from
+1:05 Vector arithmetic and length
+1:54 The dot product: two definitions, one theorem
+3:22 Projection: the shadow
+3:59 Cosine similarity: Salton, 1975
+4:48 Where AI uses it
+5:39 Real time and industry
+6:46 Recap: what, when and how
+
+QUESTIONS ANSWERED IN THIS VIDEO
+- What is a vector in simple terms?
+- What does the dot product tell you?
+- Why are there two formulas for the dot product?
+- What is cosine similarity?
+- Where is the dot product used in AI?
+- Where is the dot product used in real time?
+
+SOURCES
+- W. R. Hamilton, quaternions, 1843; H. Grassmann, Die lineale Ausdehnungslehre, 1844
+- J. W. Gibbs, Elements of Vector Analysis, privately printed 1881–1884; E. B. Wilson, Vector Analysis, 1901
+- J. H. Lambert, Photometria, 1760
+- G. Salton, A. Wong, C. S. Yang, A vector space model for automatic indexing, Communications of the ACM, 1975
+- T. Mikolov et al., Efficient estimation of word representations in vector space, 2013
+- A. Vaswani et al., Attention is all you need, 2017
+
+All mathematics in this video is computed and independently tested; nothing is drawn by hand.
+
+#dotproduct #whatisavector #scalarproduct #cosinesimilarity #projection

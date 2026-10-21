@@ -1,0 +1,891 @@
+1
+00:00:00,321 --> 00:00:03,301
+Let me start where a working data scientist starts,
+
+2
+00:00:03,422 --> 00:00:05,400
+with a decision somebody has to make.
+
+3
+00:00:05,601 --> 00:00:08,722
+A bank receives a loan application and has to decide
+
+4
+00:00:08,584 --> 00:00:09,596
+whether to lend.
+
+5
+00:00:09,789 --> 00:00:12,604
+Behind that decision sits a table of past loans,
+
+6
+00:00:12,655 --> 00:00:15,671
+and the one we will use is real: 1,000 loans from
+
+7
+00:00:15,532 --> 00:00:18,453
+a German bank, published for research, with twenty
+
+8
+00:00:18,315 --> 00:00:20,800
+facts about each borrower and a final column that
+
+9
+00:00:20,662 --> 00:00:23,206
+records whether the loan was repaid or went bad.
+
+10
+00:00:23,419 --> 00:00:26,128
+Seven hundred were repaid, and three hundred were
+
+11
+00:00:25,990 --> 00:00:26,588
+not.
+
+12
+00:00:26,792 --> 00:00:29,725
+Before any formula, notice what this table must
+
+13
+00:00:29,587 --> 00:00:32,071
+contain, because it is what you will need for your
+
+14
+00:00:31,934 --> 00:00:32,731
+own problem.
+
+15
+00:00:32,936 --> 00:00:35,856
+Each row is one example, each column is a feature
+
+16
+00:00:35,719 --> 00:00:38,310
+you knew at decision time, and one column is the
+
+17
+00:00:38,172 --> 00:00:39,701
+target you want to predict.
+
+18
+00:00:39,929 --> 00:00:42,437
+We will keep eight features, such as the balance
+
+19
+00:00:42,299 --> 00:00:44,914
+of the current account, the loan duration, the
+
+20
+00:00:44,775 --> 00:00:47,166
+amount, the savings and the age.
+
+21
+00:00:47,393 --> 00:00:50,420
+And we will hide 200 rows from the model, so that
+
+22
+00:00:50,283 --> 00:00:52,661
+at the end we can test it on loans it has never
+
+23
+00:00:52,523 --> 00:00:53,109
+seen.
+
+24
+00:00:54,559 --> 00:00:56,006
+Which model, then?
+
+25
+00:00:56,231 --> 00:00:58,999
+The first question is what kind of answer you need.
+
+26
+00:00:59,226 --> 00:01:02,017
+If the target is a number, such as how many bikes
+
+27
+00:01:01,879 --> 00:01:04,565
+will be rented at five o'clock, that is a regression
+
+28
+00:01:04,426 --> 00:01:06,853
+problem, and linear regression is the place to
+
+29
+00:01:06,714 --> 00:01:07,406
+start.
+
+30
+00:01:07,634 --> 00:01:10,319
+If the target is a yes or no, such as will this
+
+31
+00:01:10,181 --> 00:01:13,433
+loan go bad, that is classification, and logistic
+
+32
+00:01:13,294 --> 00:01:15,119
+regression is the place to start.
+
+33
+00:01:15,346 --> 00:01:18,350
+If there are several classes, you reach for softmax,
+
+34
+00:01:18,400 --> 00:01:19,848
+which we covered last time.
+
+35
+00:01:20,042 --> 00:01:22,893
+The second question is what you need from the answer.
+
+36
+00:01:23,120 --> 00:01:25,639
+When a regulator or a doctor has to understand
+
+37
+00:01:25,502 --> 00:01:28,282
+the decision, a linear or logistic model gives
+
+38
+00:01:28,143 --> 00:01:30,852
+you a readable coefficient for every feature, and
+
+39
+00:01:30,714 --> 00:01:33,139
+that readability is often the reason it wins.
+
+40
+00:01:33,367 --> 00:01:35,569
+When the relationship is clearly not a straight
+
+41
+00:01:35,431 --> 00:01:38,069
+line and you have the data to prove it, a tree
+
+42
+00:01:37,931 --> 00:01:40,463
+ensemble or a neural network will fit better.
+
+43
+00:01:40,691 --> 00:01:43,163
+But fit the regression first, because it is the
+
+44
+00:01:43,025 --> 00:01:45,852
+baseline every other model has to beat, and because
+
+45
+00:01:45,714 --> 00:01:48,446
+the last layer of that network is a logistic regression
+
+46
+00:01:48,309 --> 00:01:48,919
+anyway.
+
+47
+00:01:50,404 --> 00:01:52,984
+So let us build linear regression properly, on
+
+48
+00:01:52,845 --> 00:01:55,259
+five points small enough to do by hand: x from
+
+49
+00:01:55,121 --> 00:01:58,360
+one to five, and y equal to two, two point eight,
+
+50
+00:01:58,458 --> 00:02:01,285
+four point one, four point nine, and six point
+
+51
+00:02:01,147 --> 00:02:01,639
+two.
+
+52
+00:02:01,840 --> 00:02:05,481
+Any line, w x plus b, misses each point by some
+
+53
+00:02:05,342 --> 00:02:07,732
+residual, and if we square those residuals and
+
+54
+00:02:07,594 --> 00:02:10,480
+add them up we get a single number, the loss, that
+
+55
+00:02:10,342 --> 00:02:12,237
+says how badly the line is doing.
+
+56
+00:02:12,441 --> 00:02:15,104
+Drag the line, and the loss changes with it.
+
+57
+00:02:15,292 --> 00:02:17,918
+To find the best line we set both derivatives of
+
+58
+00:02:17,780 --> 00:02:20,336
+the loss to zero, which gives two equations in
+
+59
+00:02:20,198 --> 00:02:22,753
+two unknowns, and they solve in closed form.
+
+60
+00:02:22,979 --> 00:02:25,781
+The slope is the covariance of x and y divided
+
+61
+00:02:25,644 --> 00:02:28,458
+by the variance of x, and the intercept is chosen
+
+62
+00:02:28,321 --> 00:02:30,652
+so that the line passes through the mean point.
+
+63
+00:02:30,875 --> 00:02:34,209
+With our numbers, x bar is 3 and y bar is 4.
+
+64
+00:02:34,436 --> 00:02:37,770
+The covariance sum comes to 10.5 and the variance
+
+65
+00:02:37,632 --> 00:02:38,501
+sum to 10.
+
+66
+00:02:38,696 --> 00:02:44,529
+So w is 1.05, and b is 4 minus 1.05 times 3, which
+
+67
+00:02:44,391 --> 00:02:45,885
+is 0.85.
+
+68
+00:02:46,111 --> 00:02:51,049
+The loss at that line is 0.075, down from 91.1
+
+69
+00:02:50,910 --> 00:02:52,629
+for a flat line through zero.
+
+70
+00:02:52,833 --> 00:02:55,378
+For more than one input the same idea is written
+
+71
+00:02:55,239 --> 00:02:59,221
+once, in matrix form: X transpose X, times theta,
+
+72
+00:02:59,354 --> 00:03:01,085
+equals X transpose y.
+
+73
+00:03:01,279 --> 00:03:03,823
+These are the normal equations, and solving them
+
+74
+00:03:03,684 --> 00:03:05,839
+gives the plane that fits a cloud of points in
+
+75
+00:03:05,701 --> 00:03:08,280
+three dimensions, or the hyperplane that fits a
+
+76
+00:03:08,142 --> 00:03:10,756
+table with six columns, which is exactly what we
+
+77
+00:03:10,618 --> 00:03:11,594
+are about to do.
+
+78
+00:03:12,333 --> 00:03:15,431
+And gradient descent, from lesson one, arrives
+
+79
+00:03:15,293 --> 00:03:16,410
+at the same answer.
+
+80
+00:03:16,637 --> 00:03:19,110
+The gradient of the loss is twice the residuals
+
+81
+00:03:18,972 --> 00:03:21,646
+weighted by x, and twice the residuals on their
+
+82
+00:03:21,508 --> 00:03:22,036
+own.
+
+83
+00:03:22,250 --> 00:03:26,245
+Four hundred small steps from zero, and w is 1.05,
+
+84
+00:03:26,378 --> 00:03:30,809
+b is 0.849: the closed form, found by walking downhill.
+
+85
+00:03:32,279 --> 00:03:33,526
+Now the real job.
+
+86
+00:03:33,750 --> 00:03:36,472
+A bike-sharing company wants to know how many bikes
+
+87
+00:03:36,333 --> 00:03:38,794
+will be rented in a given hour, so it can move
+
+88
+00:03:38,656 --> 00:03:40,186
+bikes to where they are needed.
+
+89
+00:03:40,413 --> 00:03:45,610
+The data is real: 17,379 hours over two years,
+
+90
+00:03:45,472 --> 00:03:47,992
+and for each hour the temperature, the humidity,
+
+91
+00:03:47,854 --> 00:03:50,433
+the wind, whether it was a working day, and the
+
+92
+00:03:50,295 --> 00:03:53,594
+number of rentals, which averaged 189.
+
+93
+00:03:53,455 --> 00:03:56,601
+The hour of the day goes in as a sine and a cosine,
+
+94
+00:03:56,462 --> 00:03:59,160
+so that eleven at night sits next to midnight rather
+
+95
+00:03:59,021 --> 00:04:00,386
+than twenty-three steps away.
+
+96
+00:04:00,583 --> 00:04:04,754
+We solve the normal equations on 13,903 training
+
+97
+00:04:04,616 --> 00:04:06,559
+hours and read the coefficients.
+
+98
+00:04:06,753 --> 00:04:09,921
+Each extra degree of temperature adds about 6.7
+
+99
+00:04:09,783 --> 00:04:12,763
+rentals an hour, and each point of humidity removes
+
+100
+00:04:12,625 --> 00:04:13,436
+about one.
+
+101
+00:04:13,661 --> 00:04:16,170
+Those are sentences the operations team can act
+
+102
+00:04:16,031 --> 00:04:19,283
+on, and no deep model hands them to you so directly.
+
+103
+00:04:19,458 --> 00:04:20,458
+Did it work?
+
+104
+00:04:20,651 --> 00:04:24,788
+On the 3,476 held-out hours the typical error is
+
+105
+00:04:24,649 --> 00:04:28,644
+97 rentals, the root mean square error is 140,
+
+106
+00:04:28,788 --> 00:04:31,875
+and the model explains 0.42 of the variance.
+
+107
+00:04:32,088 --> 00:04:34,973
+That is a useful baseline and an honest one, and
+
+108
+00:04:34,835 --> 00:04:36,719
+we will come back to what it gets wrong.
+
+109
+00:04:38,184 --> 00:04:39,914
+Now the yes-or-no question.
+
+110
+00:04:40,139 --> 00:04:43,095
+Here are ten students, the hours each one studied,
+
+111
+00:04:43,158 --> 00:04:44,416
+and whether they passed.
+
+112
+00:04:44,643 --> 00:04:47,341
+A straight line predicts numbers below zero and
+
+113
+00:04:47,202 --> 00:04:49,734
+above one, which no probability can be.
+
+114
+00:04:49,950 --> 00:04:52,211
+So we take the linear score and pass it through
+
+115
+00:04:52,073 --> 00:04:55,123
+the sigmoid, one over one plus e to the minus score,
+
+116
+00:04:55,268 --> 00:04:57,718
+and now the output lives between zero and one.
+
+117
+00:04:57,917 --> 00:05:00,425
+Read it backwards and the score has a meaning.
+
+118
+00:05:00,653 --> 00:05:03,892
+The log of p over one minus p, the log-odds, is
+
+119
+00:05:03,754 --> 00:05:07,760
+exactly w x plus b, so each extra unit of x multiplies
+
+120
+00:05:07,622 --> 00:05:09,270
+the odds by e to the w.
+
+121
+00:05:09,485 --> 00:05:11,958
+That is why doctors and banks like this model:
+
+122
+00:05:12,115 --> 00:05:14,682
+every coefficient is an odds ratio they can read
+
+123
+00:05:14,544 --> 00:05:15,201
+aloud.
+
+124
+00:05:15,417 --> 00:05:16,616
+How do we fit it?
+
+125
+00:05:16,832 --> 00:05:18,302
+Not with squared error.
+
+126
+00:05:18,530 --> 00:05:21,156
+We maximise the likelihood of the labels we actually
+
+127
+00:05:21,018 --> 00:05:24,411
+saw, the product of p for every pass and one minus
+
+128
+00:05:24,273 --> 00:05:25,578
+p for every fail.
+
+129
+00:05:25,773 --> 00:05:28,658
+Take the log, flip the sign, and the loss is the
+
+130
+00:05:28,521 --> 00:05:31,583
+cross-entropy from last lesson, for two classes.
+
+131
+00:05:31,750 --> 00:05:35,037
+Differentiate, and the sigmoid's derivative cancels
+
+132
+00:05:34,899 --> 00:05:35,650
+the log's.
+
+133
+00:05:35,876 --> 00:05:39,752
+The gradient is X transpose times p minus y: prediction
+
+134
+00:05:39,614 --> 00:05:42,665
+minus truth, weighted by the inputs, exactly the
+
+135
+00:05:42,527 --> 00:05:43,585
+softmax rule.
+
+136
+00:05:43,812 --> 00:05:46,580
+There is no closed form this time, so gradient
+
+137
+00:05:46,442 --> 00:05:47,783
+descent does the work.
+
+138
+00:05:47,958 --> 00:05:52,778
+Fitted, w is 2.6 and b is -7.16.
+
+139
+00:05:53,005 --> 00:05:56,741
+The fifty-percent point is 2.75 hours; two hours
+
+140
+00:05:56,602 --> 00:06:00,443
+of study gives a 0.12 chance of passing, and four
+
+141
+00:06:00,305 --> 00:06:01,999
+hours gives 0.96.
+
+142
+00:06:03,434 --> 00:06:04,575
+Back to the bank.
+
+143
+00:06:04,799 --> 00:06:07,178
+We standardise the eight features so that each
+
+144
+00:06:07,040 --> 00:06:09,713
+is measured in standard deviations, then train
+
+145
+00:06:09,575 --> 00:06:12,520
+logistic regression on the 800 loans with nothing
+
+146
+00:06:12,382 --> 00:06:14,183
+but the gradient we just derived.
+
+147
+00:06:14,410 --> 00:06:19,183
+The loss per loan falls from 0.693 to 0.483.
+
+148
+00:06:19,375 --> 00:06:22,426
+Now the readout a credit officer actually uses.
+
+149
+00:06:22,653 --> 00:06:25,504
+Holding everything else fixed, a better current-account
+
+150
+00:06:25,366 --> 00:06:29,041
+balance multiplies the odds of a bad loan by 0.47,
+
+151
+00:06:29,186 --> 00:06:30,528
+so it roughly halves them.
+
+152
+00:06:30,721 --> 00:06:34,740
+A longer duration multiplies them by 1.35, a larger
+
+153
+00:06:34,601 --> 00:06:38,784
+amount by 1.27, and more savings by 0.71.
+
+154
+00:06:38,986 --> 00:06:41,647
+Every one of these is a sentence you can defend
+
+155
+00:06:41,509 --> 00:06:42,980
+in front of a regulator.
+
+156
+00:06:43,167 --> 00:06:44,178
+Did it work?
+
+157
+00:06:44,372 --> 00:06:48,012
+On the 200 unseen loans the model is right 74 percent
+
+158
+00:06:47,874 --> 00:06:51,810
+of the time, against 71 percent for simply approving
+
+159
+00:06:51,671 --> 00:06:54,805
+everyone, and its area under the curve is 0.74,
+
+160
+00:06:54,667 --> 00:06:57,515
+which is where published results on this dataset
+
+161
+00:06:57,377 --> 00:06:58,175
+sit.
+
+162
+00:06:58,037 --> 00:07:02,031
+The calibration error is 0.074, so when it says
+
+163
+00:07:02,117 --> 00:07:04,732
+thirty percent, about thirty percent go bad.
+
+164
+00:07:04,594 --> 00:07:08,364
+And here is one real applicant from the test set:
+
+165
+00:07:08,226 --> 00:07:13,353
+35 years old, a 36-month loan of 6,948 marks, with
+
+166
+00:07:13,214 --> 00:07:15,593
+a current account under 200 marks.
+
+167
+00:07:15,455 --> 00:07:19,508
+The model puts the risk at 56 percent, and the
+
+168
+00:07:19,370 --> 00:07:20,027
+bank's threshold decides what happens next.
+
+169
+00:07:21,476 --> 00:07:24,492
+Now the part most explanations skip: when these
+
+170
+00:07:24,353 --> 00:07:25,329
+models fail.
+
+171
+00:07:25,542 --> 00:07:27,531
+First, extrapolation.
+
+172
+00:07:27,735 --> 00:07:31,776
+The hottest hour in the bike data was 41 degrees.
+
+173
+00:07:31,638 --> 00:07:34,536
+Ask the model about sixty degrees and it happily
+
+174
+00:07:34,398 --> 00:07:38,192
+predicts 577 rentals, more than at thirty, because
+
+175
+00:07:38,053 --> 00:07:40,160
+a straight line never stops.
+
+176
+00:07:40,023 --> 00:07:43,061
+A regression is only trustworthy inside the range
+
+177
+00:07:42,924 --> 00:07:43,863
+it was trained on.
+
+178
+00:07:44,042 --> 00:07:45,642
+Second, leakage.
+
+179
+00:07:45,870 --> 00:07:48,861
+The bike table also records casual and registered
+
+180
+00:07:48,724 --> 00:07:51,751
+rentals separately, and the two add up to the total.
+
+181
+00:07:51,955 --> 00:07:54,369
+Put them in as features and the error drops to
+
+182
+00:07:54,231 --> 00:07:56,999
+exactly zero, which looks like a triumph and is
+
+183
+00:07:56,860 --> 00:07:59,109
+actually a model that needs the answer in order
+
+184
+00:07:58,971 --> 00:08:00,194
+to make its prediction.
+
+185
+00:08:00,422 --> 00:08:03,213
+Whenever a result looks too good, ask whether a
+
+186
+00:08:03,075 --> 00:08:05,501
+feature was known before the decision was made.
+
+187
+00:08:05,667 --> 00:08:08,163
+Third, imbalance and the threshold.
+
+188
+00:08:08,379 --> 00:08:11,241
+Seventy percent of the loans are good, so approving
+
+189
+00:08:11,103 --> 00:08:14,897
+everyone is already 71 percent accurate, and accuracy
+
+190
+00:08:14,759 --> 00:08:16,242
+alone would hide that.
+
+191
+00:08:16,103 --> 00:08:19,224
+At a threshold of one half the model catches 48
+
+192
+00:08:19,087 --> 00:08:21,937
+percent of the bad loans; lower it to zero point
+
+193
+00:08:21,799 --> 00:08:25,769
+three and it catches 65 percent, at the cost of
+
+194
+00:08:25,632 --> 00:08:28,151
+flagging 87 applicants instead of 49.
+
+195
+00:08:28,014 --> 00:08:30,876
+The threshold is a business decision about which
+
+196
+00:08:31,009 --> 00:08:33,505
+mistake costs more, not a mathematical constant.
+
+197
+00:08:33,542 --> 00:08:35,166
+Fourth, the wrong shape.
+
+198
+00:08:35,028 --> 00:08:38,008
+Look at the bike model's errors by hour of day.
+
+199
+00:08:37,870 --> 00:08:41,440
+At eight in the morning it under-predicts by 237
+
+200
+00:08:41,502 --> 00:08:44,789
+rentals, at five in the afternoon by 160, and at
+
+201
+00:08:44,650 --> 00:08:47,843
+three at night it over-predicts by 34: it cannot
+
+202
+00:08:47,705 --> 00:08:49,258
+bend around rush hour.
+
+203
+00:08:49,120 --> 00:08:52,076
+When the residuals show a pattern like this, the
+
+204
+00:08:51,938 --> 00:08:54,753
+relationship is not linear, and that, not fashion,
+
+205
+00:08:54,615 --> 00:08:57,347
+is the signal to move to trees or a neural network.
+
+206
+00:08:58,809 --> 00:09:00,645
+So here is the checklist.
+
+207
+00:09:00,836 --> 00:09:03,628
+Decide what kind of answer you need: a number means
+
+208
+00:09:03,489 --> 00:09:06,245
+linear regression, a yes or no means logistic,
+
+209
+00:09:06,355 --> 00:09:08,380
+several classes means softmax.
+
+210
+00:09:08,594 --> 00:09:11,562
+Build a table with one row per example, features
+
+211
+00:09:11,424 --> 00:09:14,310
+known at decision time, and a held-out test set.
+
+212
+00:09:14,525 --> 00:09:17,223
+Fit the regression first, read the coefficients
+
+213
+00:09:17,084 --> 00:09:19,794
+as plain sentences, and judge it on the test set
+
+214
+00:09:19,655 --> 00:09:22,541
+with the right metric: error for a number, area
+
+215
+00:09:22,403 --> 00:09:24,912
+under the curve and calibration for a probability.
+
+216
+00:09:25,125 --> 00:09:28,211
+Then check the four ways it fails: never extrapolate
+
+217
+00:09:28,073 --> 00:09:30,617
+outside the data, hunt for leaked features when
+
+218
+00:09:30,479 --> 00:09:33,070
+a result looks too good, choose the threshold by
+
+219
+00:09:32,932 --> 00:09:35,428
+the cost of each mistake, and look at the residuals
+
+220
+00:09:35,290 --> 00:09:37,634
+for a pattern before you reach for a deeper model.
+
+221
+00:09:37,837 --> 00:09:40,264
+Do that, and you have done what the bank and the
+
+222
+00:09:40,125 --> 00:09:41,726
+bike company actually do.
+
+223
+00:09:41,941 --> 00:09:45,063
+Next: the neuron and activation functions.

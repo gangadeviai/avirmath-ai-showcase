@@ -1,0 +1,258 @@
+# AVIRMATH AI lesson file — shared representation for website, experiments and video.
+# {placeholders} are filled from avirmath.mathcore.backprop.lesson_facts() at build time.
+
+id: backpropagation
+title: "What Is Backpropagation? The Chain Rule That Trains Every Neural Network"
+version: 1
+mathcore: avirmath.mathcore.backprop
+
+one_idea: >
+  Backpropagation is the chain rule organised so that one backward sweep gives the derivative of
+  the error with respect to every weight at once — the gradient that gradient descent needs.
+
+audience:
+  profile: {level: engineer, field: general}
+
+analogy:
+  name: "none: the computation itself is the picture"
+  mapping: {"a nudge travelling through the network": "a derivative, scaled at every stage"}
+  breaks_when: "The worked network has two weights; a real one has billions. The three lines of matrix form do not change."
+
+voice:
+  engine: edge-tts
+  name: en-GB-SoniaNeural
+  rate: "+12%"
+
+colors:
+  parameter: QUERY
+  loss: KEY
+  gradient: NEGATIVE
+  learning_rate: WEIGHT
+  optimum: VALUE
+
+seo:
+  primary_question: "What is backpropagation?"
+  short_answer: >
+    Backpropagation is the algorithm that computes how much a neural network's error changes with
+    respect to every weight, in a single backward pass, by applying the chain rule from the output
+    back to the input. Published for neural networks by Rumelhart, Hinton and Williams in 1986, it
+    supplies the gradient that gradient descent uses to train every modern network.
+  keywords: [backpropagation, what is backpropagation, chain rule, gradient of a neural network,
+             reverse-mode automatic differentiation, delta rule, vanishing gradient, Rumelhart Hinton Williams 1986,
+             Linnainmaa 1970, autograd, how neural networks learn, machine learning mathematics]
+  faq:
+    - q: "What is backpropagation in simple terms?"
+      a: "A way to find out, for every weight in a network, how much the error would change if that weight moved — all in one sweep from the output back to the input."
+    - q: "Is backpropagation the same as gradient descent?"
+      a: "No. Backpropagation computes the gradient; gradient descent uses it to update the weights. One supplies the direction, the other takes the step."
+    - q: "Who invented backpropagation, and when?"
+      a: "Reverse-mode differentiation was described by Seppo Linnainmaa in 1970. Paul Werbos applied it to neural networks in 1974, and Rumelhart, Hinton and Williams showed its power in Nature in 1986."
+    - q: "Why is it called back-propagation?"
+      a: "Because the error signal is propagated backwards: each layer's derivative is computed from the layer after it, reusing work instead of recomputing it."
+    - q: "Why does backpropagation need the chain rule?"
+      a: "A network is a composition of functions. The derivative of a composition is the product of the derivatives of its parts, and backpropagation multiplies those parts in the cheapest order."
+    - q: "What is the vanishing gradient problem?"
+      a: "Each sigmoid layer multiplies the backward signal by at most a quarter, so after many layers the gradient reaching the early weights is tiny. It is why ReLU, residual connections and normalisation exist."
+  sources:
+    - "S. Linnainmaa, master's thesis, University of Helsinki, 1970 (reverse-mode automatic differentiation)"
+    - "P. Werbos, Beyond Regression, PhD thesis, Harvard University, 1974"
+    - "D. E. Rumelhart, G. E. Hinton, R. J. Williams, Learning representations by back-propagating errors, Nature 323, 1986"
+    - "Y. LeCun et al., Backpropagation applied to handwritten zip code recognition, Neural Computation, 1989"
+
+equations:
+  - id: chain
+    tex: '\frac{dy}{dx} = \frac{dy}{du}\cdot\frac{du}{dx}'
+    checked_by: test_chain_rule_demo_matches_sympy_and_numbers
+  - id: net
+    tex: 'z = w_1 x,\quad h = \sigma(z),\quad \hat{y} = w_2 h,\quad L = (\hat{y} - y)^{2}'
+    checked_by: test_worked_network_derivatives_symbolically
+  - id: dw2
+    tex: '\frac{\partial L}{\partial w_2} = \frac{\partial L}{\partial \hat{y}}\cdot h = 2(\hat{y}-y)\,h'
+    checked_by: test_worked_network_derivatives_symbolically
+  - id: dh
+    tex: '\frac{\partial L}{\partial h} = \frac{\partial L}{\partial \hat{y}}\cdot w_2'
+    checked_by: test_worked_network_derivatives_symbolically
+  - id: dw1
+    tex: '\frac{\partial L}{\partial w_1} = \frac{\partial L}{\partial h}\cdot\sigma''(z)\cdot x'
+    checked_by: test_worked_network_matches_finite_differences
+  - id: sigprime
+    tex: '\sigma''(z) = \sigma(z)\,(1-\sigma(z)) \le \tfrac{1}{4}'
+    checked_by: test_sigmoid_prime_identity_and_bound
+  - id: matrix
+    tex: '\delta_l = (W_{l+1}^{\top}\delta_{l+1}) \odot \sigma''(z_l), \qquad \frac{\partial L}{\partial W_l} = \delta_l\, h_{l-1}^{\top}'
+    checked_by: test_matrix_backprop_equals_numerical_gradient
+  - id: update
+    tex: 'W_l \leftarrow W_l - \eta\,\frac{\partial L}{\partial W_l}'
+    checked_by: test_one_backprop_step_lowers_the_loss_and_training_converges
+
+chapters:
+  - id: hook
+    title: "What is backpropagation?"
+    scene: HookBP
+    beats:
+      - id: hook-1
+        cue: question
+        narration: >
+          What is backpropagation? It is the chain rule, organised so that one backward sweep gives
+          the derivative of the error with respect to every weight in a network, all at once.
+      - id: hook-2
+        cue: pair
+        narration: >
+          Gradient descent takes the step. Backpropagation supplies the direction. Together they are
+          how every neural network learns.
+
+  - id: problem
+    title: "The problem: one weight at a time"
+    scene: NudgeProblem
+    beats:
+      - id: problem-1
+        cue: nudge
+        narration: >
+          Here is the obvious way to find a slope. Nudge one weight, run the whole network again,
+          and see how the error moved. That is one full pass, for one weight.
+      - id: problem-2
+        cue: cost
+        narration: >
+          A thousand weights means a thousand and one passes. A billion weights means a billion and
+          one. In nineteen seventy, Seppo Linnainmaa showed there is a better way, and in nineteen
+          seventy-four Paul Werbos applied it to neural networks. One forward pass. One backward
+          pass. Every derivative.
+
+  - id: chain
+    title: "The chain rule, seen"
+    scene: ChainRule
+    beats:
+      - id: chain-1
+        cue: compose
+        equations: [chain]
+        narration: >
+          It rests on one fact from calculus. If y depends on u, and u depends on x, then a small
+          nudge in x is scaled once by d u by d x, and again by d y by d u. Rates multiply.
+      - id: chain-2
+        cue: nudge_flow
+        narration: >
+          Watch the nudge travel. It enters at x, is stretched by the first slope, then by the
+          second. The total stretch is the product. A network is just a longer chain.
+
+  - id: worked
+    title: "The mathematics, worked by hand"
+    scene: WorkedBackprop
+    beats:
+      - id: worked-1
+        cue: network
+        equations: [net]
+        narration: >
+          Take the smallest network that has a hidden layer. Input x, weight w one, a sigmoid, weight
+          w two, output y hat, and a squared error. Two weights. Four stages.
+      - id: worked-2
+        cue: forward
+        narration: >
+          Forward pass, with numbers. x is {x:g}, w one is {w1:g}, so z is {z:g}. The sigmoid gives
+          h equals {h:g}. w two is {w2:g}, so y hat is {yhat:g}. The target is {y:g}. The error is
+          {loss:g}.
+      - id: worked-3
+        cue: dyhat
+        narration: >
+          Now backwards. The error depends on y hat through the square, so d L by d y hat is two
+          times y hat minus y: {dL_dyhat:g}.
+      - id: worked-4
+        cue: dw2
+        equations: [dw2]
+        narration: >
+          y hat is w two times h, so the slope with respect to w two is that number times h:
+          {dL_dw2:g}. The first weight is done.
+      - id: worked-5
+        cue: dh
+        equations: [dh]
+        narration: >
+          To reach w one we must pass through h. The slope with respect to h is d L by d y hat,
+          times w two: {dL_dh:g}. Keep this number. Everything before h will reuse it.
+      - id: worked-6
+        cue: dw1
+        equations: [dw1, sigprime]
+        narration: >
+          h is the sigmoid of z, and the sigmoid's slope is sigma times one minus sigma: here
+          {dh_dz:g}. z is w one times x. Multiply the chain: {dL_dh:g}, times {dh_dz:g}, times
+          {x:g}. d L by d w one is {dL_dw1:g}.
+      - id: worked-7
+        cue: step
+        equations: [update]
+        narration: >
+          Two derivatives, one backward sweep. Hand them to gradient descent with eta equal to
+          {lr:g}: w one becomes {w1_new:g}, w two becomes {w2_new:g}, and the error falls from
+          {loss:g} to {loss_after:g}.
+
+  - id: why
+    title: "Why backwards"
+    scene: WhyBackwards
+    beats:
+      - id: why-1
+        cue: reuse
+        narration: >
+          Notice what we reused. The slope at h was computed once, and every weight upstream of h
+          multiplied by it. In a wide layer, hundreds of weights share the same number.
+      - id: why-2
+        cue: delta
+        equations: [matrix]
+        narration: >
+          Call that shared quantity delta: the slope of the error with respect to a layer's inputs.
+          Delta for one layer is the next layer's delta, pulled back through its weights, times the
+          sigmoid slope. And the gradient of a weight matrix is simply delta times the layer's
+          input. Three lines. Any depth.
+      - id: why-3
+        cue: check
+        narration: >
+          Here is the proof you can run. Take the backward-sweep gradient, and the nudge-and-remeasure
+          gradient, on the same surface. The arrows coincide, to six decimal places.
+
+  - id: industry
+    title: "In industry: reading handwritten digits"
+    scene: DigitsBP
+    beats:
+      - id: industry-1
+        cue: nature
+        narration: >
+          In nineteen eighty-six, Rumelhart, Hinton and Williams published this in Nature, and showed
+          that the hidden layers learn useful features on their own. Three years later, Yann LeCun's
+          group trained a network by backpropagation to read handwritten postcodes for the United
+          States Postal Service: {lenet_images} digits, about one percent error.
+      - id: industry-2
+        cue: train
+        narration: >
+          Here is a small version. {digits_n} noisy eight-by-eight digits, a network with one hidden
+          layer, and nothing but the three lines you just saw. It starts at {digits_acc_start} percent.
+          After {digits_epochs} passes through the data it reads {digits_acc_final} percent correctly.
+
+  - id: today
+    title: "Today: autograd and the vanishing gradient"
+    scene: TodayBP
+    beats:
+      - id: today-1
+        cue: autograd
+        narration: >
+          Today nobody writes these derivatives by hand. Frameworks record the forward computation as
+          a graph and run the backward sweep automatically. The algorithm is unchanged, from two
+          weights to hundreds of billions.
+      - id: today-2
+        cue: vanish
+        narration: >
+          But the chain rule has a cost. Each sigmoid layer multiplies the backward signal by at most
+          a quarter. Six layers deep, the gradient reaching the first weights is thousands of times
+          smaller than at the output. That is the vanishing gradient, and it is why the next lessons
+          exist: better activations, residual connections, normalisation.
+
+  - id: recap
+    title: "Recap: what, when and how"
+    scene: RecapBP
+    beats:
+      - id: recap-1
+        cue: what
+        narration: >
+          So, what is backpropagation? The chain rule, run backwards through a network, giving every
+          weight's derivative in one sweep.
+      - id: recap-2
+        cue: when_how
+        narration: >
+          When? Linnainmaa, nineteen seventy. Werbos, nineteen seventy-four. Rumelhart, Hinton and
+          Williams, nineteen eighty-six. How is it used in A.I.? Every training step of every network:
+          forward pass, backward pass, gradient descent step. Next: vectors and the dot product.

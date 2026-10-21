@@ -1,0 +1,27 @@
+Gradient descent is an optimisation algorithm that reduces an error by repeatedly stepping in the direction opposite to its gradient, the direction in which the error falls fastest. It was proposed by Augustin-Louis Cauchy in 1847 and is the method used to train almost every neural network today.
+
+CHAPTERS
+0:00 What is gradient descent?
+0:20 Paris, 1847: Cauchy's idea
+1:23 The mathematics, step by step
+2:28 The learning rate: how big a step?
+3:13 Stanford, 1960: Widrow, Hoff and stochastic gradient descent
+3:50 In industry: the adaptive noise canceller
+4:41 Today: how gradient descent trains neural networks
+5:13 Recap: what, when and how
+
+QUESTIONS ANSWERED IN THIS VIDEO
+- What is gradient descent in simple terms?
+- Who invented gradient descent, and when?
+- How is gradient descent used in AI and machine learning?
+- What is the learning rate?
+- What is stochastic gradient descent?
+- Where is gradient descent used in industry?
+
+SOURCES
+- A.-L. Cauchy, Methode generale pour la resolution des systemes d'equations simultanees, Comptes Rendus de l'Academie des Sciences, 1847
+- B. Widrow and M. E. Hoff, Adaptive switching circuits, IRE WESCON Convention Record, 1960
+
+All mathematics in this video is computed and independently tested; nothing is drawn by hand.
+
+#gradientdescent #whatisgradientdescent #learningrate #stochasticgradientdescent #LMSalgorithm

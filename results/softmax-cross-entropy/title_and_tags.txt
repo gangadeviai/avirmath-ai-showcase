@@ -1,0 +1,5 @@
+TITLE
+Softmax and Cross-Entropy in Machine Learning: Multi-Class Diagnosis on Real Patient Data, Lung-Cancer Screening and Language Models
+
+TAGS
+softmax explained machine learning, cross-entropy loss deep learning, multi-class classification medical diagnosis, dermatology dataset softmax regression, UCI dermatology machine learning, softmax vs sigmoid when to use, calibration temperature scaling, over-confident neural networks, label noise effect on accuracy, confusion matrix explained, lung cancer screening deep learning Nature Medicine, next token prediction softmax GPT-2, perplexity language model, gradient p minus y, math behind AI, machine learning mathematics

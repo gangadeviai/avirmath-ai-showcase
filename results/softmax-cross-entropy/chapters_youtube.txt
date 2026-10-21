@@ -1,0 +1,9 @@
+0:00 A real decision and its data
+1:02 Which output layer, when
+1:57 Softmax, by hand
+3:25 Cross-entropy, by hand
+4:25 The gradient: prediction minus truth
+5:24 Softmax on a real job: six diagnoses
+6:35 At enterprise scale: a screening network and a language model
+7:31 When it fails: four things to check
+8:54 The checklist

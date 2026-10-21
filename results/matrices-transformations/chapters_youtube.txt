@@ -1,0 +1,8 @@
+0:00 The matrix inside every layer
+0:40 A matrix times a vector
+1:26 Multiplication is composition
+2:17 Determinant and inverse
+2:51 Eigenvectors: the directions that only stretch
+3:57 Inside a neural network and a Transformer
+5:03 Industry: search, recommendation and cheap fine-tuning
+6:26 Recap: what, where in AI, and how to use it

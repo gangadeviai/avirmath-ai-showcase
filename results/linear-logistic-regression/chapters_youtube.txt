@@ -1,0 +1,8 @@
+0:00 A real decision and its data
+0:54 Which model, when
+1:50 Least squares, by hand
+3:31 Linear regression on a real job: bike demand
+4:37 Logistic regression, by hand
+6:03 Logistic regression on a real job: credit risk
+7:21 When it fails: four things to check
+8:58 The checklist

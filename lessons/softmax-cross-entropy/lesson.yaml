@@ -1,0 +1,359 @@
+# AVIRMATH AI lesson file — shared representation for website, experiments and video.
+# {placeholders} are filled from avirmath.mathcore.softmax.lesson_facts() at build time.
+# v3 (2026-10-12): built around a real published medical dataset (UCI Dermatology, 366 patients,
+# six diagnoses). Structure: the problem and its data -> which output layer, when -> the maths by
+# hand -> the real job -> enterprise scale -> when it fails -> checklist. No history chapter.
+
+id: softmax-cross-entropy
+title: "Softmax and Cross-Entropy in Machine Learning: Multi-Class Diagnosis on Real Patient Data, Lung-Cancer Screening and Language Models"
+version: 3
+mathcore: avirmath.mathcore.softmax
+
+one_idea: >
+  When the answer is one of several classes, softmax turns a score per class into a probability per
+  class and cross-entropy charges the model the surprise of the true class; the gradient of one
+  through the other is prediction minus truth. The lesson trains that layer on 366 real dermatology
+  patients, reaches the published standard, shows the same layer at the end of a lung-cancer
+  screening network and a language model, and shows the four ways it fails in practice.
+
+audience:
+  profile: {level: engineer, field: general}
+
+analogy:
+  name: "none: the bars are the picture"
+  mapping: {"bars of e^z": "unnormalised weights", "bars summing to 100%": "the softmax output"}
+  breaks_when: "A real classifier has six bars, a thousand, or fifty thousand for a vocabulary; the formula is unchanged."
+
+voice:
+  engine: edge-tts
+  name: en-GB-SoniaNeural
+  rate: "+6%"
+
+colors:
+  parameter: QUERY
+  loss: KEY
+  gradient: NEGATIVE
+  learning_rate: WEIGHT
+  optimum: VALUE
+
+seo:
+  primary_question: "How are softmax and cross-entropy used in machine learning, and when do you need them?"
+  short_answer: >
+    Use a sigmoid for a yes-or-no answer and softmax when the answer is one of several classes: softmax
+    turns the network's score per class into a probability per class, and cross-entropy is the loss
+    that trains it, charging the model the surprise of the true class; its gradient is simply the
+    predicted probabilities minus the one-hot truth. This lesson trains that layer on 366 real
+    dermatology patients with six possible diagnoses (97 percent on held-out patients, at the level of
+    the original 1998 paper), shows the same layer at the end of Google's lung-cancer screening
+    network (Nature Medicine 2019) and of GPT-2's next-token prediction, and demonstrates the four
+    practical failures: over-confidence and calibration, missing inputs at decision time, label noise,
+    and the hidden second-best class.
+  keywords: [softmax explained machine learning, cross-entropy loss deep learning, multi-class classification medical
+             diagnosis, dermatology dataset softmax regression, UCI dermatology machine learning, softmax vs sigmoid when to use,
+             calibration temperature scaling, over-confident neural networks, label noise effect on accuracy, confusion matrix
+             explained, lung cancer screening deep learning Nature Medicine, next token prediction softmax GPT-2, perplexity
+             language model, gradient p minus y, math behind AI, machine learning mathematics]
+  faq:
+    - q: "When do I need softmax instead of a sigmoid?"
+      a: "A sigmoid gives one probability for a yes-or-no answer. Softmax gives a probability for each of several classes that add up to one: six diagnoses, a thousand image classes, or fifty thousand possible next tokens."
+    - q: "What does cross-entropy measure?"
+      a: "Minus the log of the probability the model gave to the true class, averaged over examples: the model's surprise at the truth. Its gradient with respect to the scores is the predicted probabilities minus the one-hot truth, which is where backpropagation starts."
+    - q: "How well does softmax regression do on the dermatology dataset?"
+      a: "Trained on 293 patients and tested on 73 unseen ones, it is right 97 percent of the time and the correct diagnosis is always in its top two, matching the roughly 96 percent reported by the original 1998 study with a different method."
+    - q: "What is calibration and why does it matter in medicine?"
+      a: "A calibrated model's 90 percent means it is right about 90 percent of the time. Over-trained networks become over-confident; temperature scaling, one scalar fitted on held-out data, repairs this before deployment, which matters whenever a doctor or a screening programme acts on the probability."
+    - q: "How does a lung-cancer screening model use softmax?"
+      a: "A 3-D convolutional network turns a CT scan into scores for no-cancer and cancer, and the softmax gives the probability of cancer that sets the call-back threshold. Google's 2019 Nature Medicine model reached 94.4 percent AUC this way."
+    - q: "What are the main ways a softmax classifier fails in practice?"
+      a: "Over-confidence when trained too long without regularisation, inputs that will not exist at decision time (a biopsy the clinic cannot do), noisy labels in the training records, and a single top label hiding a close second-best class."
+  sources:
+    - "H. A. Guvenir, G. Demiroz, N. Ilter, Learning differential diagnosis of erythemato-squamous diseases using voting feature intervals, Artificial Intelligence in Medicine 13(3), 147-165, 1998; UCI Dermatology dataset (CC BY 4.0), 366 patients, 34 attributes, 6 classes; the 96.2 percent figure is as reported by later studies citing the paper"
+    - "D. Ardila et al., End-to-end lung cancer screening with three-dimensional deep learning on low-dose chest computed tomography, Nature Medicine 25, 954-961 (2019): 94.4% AUC on 6,716 NLST cases; 11% fewer false positives and 5% fewer false negatives than six radiologists without prior imaging"
+    - "C. Guo, G. Pleiss, Y. Sun, K. Q. Weinberger, On Calibration of Modern Neural Networks, ICML 2017 (temperature scaling, expected calibration error)"
+    - "A. Radford et al., Language Models are Unsupervised Multitask Learners (GPT-2), 2019: byte-pair vocabulary of 50,257 tokens"
+    - "J. S. Bridle, Probabilistic interpretation of feedforward classification network outputs, 1989/1990 (the name 'softmax')"
+
+equations:
+  - id: softmax
+    tex: 'p_i = \frac{e^{z_i}}{\sum_j e^{z_j}}'
+    checked_by: test_softmax_is_a_distribution_and_matches_textbook_formula
+  - id: temperature
+    tex: 'p_i(T) = \frac{e^{z_i/T}}{\sum_j e^{z_j/T}}'
+    checked_by: test_temperature_limits
+  - id: shift
+    tex: '\mathrm{softmax}(\mathbf{z} - c) = \mathrm{softmax}(\mathbf{z})'
+    checked_by: test_shift_invariance_and_overflow_protection
+  - id: sigmoid
+    tex: '\frac{e^{z_1}}{e^{z_1}+e^{z_2}} = \sigma(z_1 - z_2)'
+    checked_by: test_two_classes_reduce_to_sigmoid
+  - id: surprise
+    tex: 'H(\mathbf{y}, \mathbf{p}) = -\sum_i y_i \log p_i = -\log p_{\text{true}}'
+    checked_by: test_cross_entropy_entropy_kl_identity
+  - id: kl
+    tex: 'H(\mathbf{y}, \mathbf{p}) = H(\mathbf{y}) + D_{KL}(\mathbf{y}\,\|\,\mathbf{p})'
+    checked_by: test_cross_entropy_entropy_kl_identity
+  - id: grad
+    tex: '\frac{\partial L}{\partial \mathbf{z}} = \mathbf{p} - \mathbf{y}'
+    checked_by: test_gradient_of_loss_is_p_minus_y
+  - id: multi
+    tex: 'L = -\frac{1}{n}\sum_{i=1}^{n} \log p_{i,\,y_i}, \qquad \mathbf{z}_i = W\mathbf{x}_i + \mathbf{b}'
+    checked_by: test_dermatology_loads_and_softmax_regression_learns_it
+  - id: calibration
+    tex: '\mathrm{ECE} = \sum_{b} \frac{n_b}{n}\,\big|\,\overline{\mathrm{conf}}_b - \overline{\mathrm{acc}}_b\,\big|'
+    checked_by: test_multiclass_ece_and_confusion_definitions
+  - id: risk
+    tex: 'p_{\text{cancer}} = \sigma(z_{\text{cancer}} - z_{\text{none}})'
+    checked_by: test_two_class_risk_is_sigmoid_of_score_difference
+  - id: perplexity
+    tex: '\mathrm{PPL} = e^{H}'
+    checked_by: test_perplexity_of_uniform_is_vocab_size
+
+chapters:
+  - id: problem
+    title: "A real decision and its data"
+    scene: ProblemSM
+    beats:
+      - id: prob-1
+        cue: clinic
+        narration: >
+          Let me start in a dermatology clinic. A patient comes in with a red, scaly rash, and six
+          different diseases can look almost identical on the skin: psoriasis, seborrheic dermatitis,
+          lichen planus, pityriasis rosea, chronic dermatitis and pityriasis rubra pilaris. Telling
+          them apart matters, because the treatments differ. The data we will use is real: {derm_n}
+          patients from a university hospital, published in Artificial Intelligence in Medicine in
+          nineteen ninety-eight, with {derm_features} findings recorded for each patient and the
+          confirmed diagnosis.
+      - id: prob-2
+        cue: dataset
+        narration: >
+          Look at what the table contains. Twelve of the findings are clinical, things the doctor sees
+          and asks, such as itching, scaling and family history, each graded from zero to three.
+          Twenty-two come from a biopsy examined under the microscope. The target column has six
+          possible values, not two, and that is exactly the situation softmax was made for. We will
+          train on {derm_train} patients and keep {derm_test} hidden for the test.
+
+  - id: choose
+    title: "Which output layer, when"
+    scene: ChooseSM
+    beats:
+      - id: choose-1
+        cue: chart
+        narration: >
+          So which output layer, and which loss? If the answer is one of two, a loan going bad or not,
+          the sigmoid and the two-class cross-entropy from the regression lesson are enough. If the
+          answer is one of several, six diagnoses or a thousand image classes, you need softmax, which
+          turns a score per class into a probability per class, with cross-entropy generalised to many
+          classes. And if the answer is one of fifty thousand, the next word a language model should
+          write, it is still softmax, just with fifty thousand bars.
+      - id: choose-2
+        cue: when
+        narration: >
+          The second question is whether the probabilities themselves will be used. If a doctor or a
+          screening programme acts on the number, ninety percent must mean ninety percent, so
+          calibration has to be checked before deployment. If the inputs are images or free text, a
+          convolutional or Transformer network will learn the features, but its last layer is this
+          same softmax with this same loss, so everything we build here carries over unchanged.
+
+  - id: softmax
+    title: "Softmax, by hand"
+    scene: SoftmaxSM
+    beats:
+      - id: sm-1
+        cue: exponentiate
+        equations: [softmax]
+        narration: >
+          Let us build softmax on three scores small enough to do by hand: two, one, and zero point
+          one. Step one: raise e to each. e to the two is {e[0]:g}, e to the one is {e[1]:g}, and e to
+          the zero point one is {e[2]:g}. Every bar is now positive, and the gaps between them have
+          grown.
+      - id: sm-2
+        cue: normalise
+        narration: >
+          Step two: divide by the total, {esum:g}. The shares are {p_pct[0]} percent, {p_pct[1]}
+          percent, and {p_pct[2]} percent. They add to one hundred, and the order is preserved. That
+          is softmax: exponentiate, then normalise.
+      - id: sm-3
+        cue: temperature
+        equations: [temperature]
+        narration: >
+          Divide the scores by a temperature first, and you control how decisive the model is. Cold,
+          at zero point three, the winner takes {cold_pct[0]} percent. Hot, at five, the shares flatten
+          to {hot_pct[0]}, {hot_pct[1]} and {hot_pct[2]}. Same scores, different confidence, and we will
+          meet this dial again when we calibrate a model.
+      - id: sm-4
+        cue: shift
+        equations: [shift]
+        narration: >
+          One property every library relies on. Add the same constant to all the scores, and softmax
+          does not change, because the constant cancels top and bottom. So before exponentiating,
+          subtract the largest score. Without that, e to the seven hundred and ten overflows a
+          computer's number format; with it, the biggest exponent is always zero.
+      - id: sm-5
+        cue: sigmoid
+        equations: [sigmoid]
+        narration: >
+          And with just two classes, softmax collapses to a function you have met: the sigmoid of the
+          difference of the two scores. Logistic regression is softmax with two bars.
+
+  - id: ce
+    title: "Cross-entropy, by hand"
+    scene: CrossEntropySM
+    beats:
+      - id: ce-1
+        cue: surprise
+        equations: [surprise]
+        narration: >
+          Now the loss. The surprise of an event with probability p is minus the log of p. Certain,
+          zero surprise. A coin flip, {surprise_half:g}. A one-in-ten event, {surprise_01:g}.
+          Cross-entropy charges the model the surprise of the true answer, and nothing else: minus the
+          log of the probability it gave to the truth.
+      - id: ce-2
+        cue: worked
+        narration: >
+          Our model said {p_pct[0]} percent for the first class, and that class is the truth. The loss
+          is minus the log of {p[0]:g}, which is {loss:g}. Had it said ten percent, the loss would have
+          been two point three; had it said ninety-nine, almost nothing. Confident and right is cheap.
+          Confident and wrong is ruinous.
+      - id: ce-3
+        cue: entropy_kl
+        equations: [kl]
+        narration: >
+          The name comes from information theory. Cross-entropy equals the entropy of the truth plus
+          the Kullback-Leibler divergence from the truth to the prediction. For a single correct label
+          the entropy is zero, so minimising cross-entropy is exactly minimising the divergence: making
+          the prediction match the truth.
+
+  - id: grad
+    title: "The gradient: prediction minus truth"
+    scene: GradientSM
+    beats:
+      - id: gr-1
+        cue: derive
+        equations: [grad]
+        narration: >
+          Here is the reason these two are always paired. Differentiate the loss with respect to the
+          scores. The derivative of softmax is messy on its own, p i times delta i j minus p j. But
+          push it through minus the log, and everything cancels. The gradient is p minus y:
+          prediction minus truth.
+      - id: gr-2
+        cue: numbers
+        narration: >
+          With our numbers: the prediction is {p[0]:g}, {p[1]:g}, {p[2]:g}; the truth is one, zero,
+          zero. So the gradient is {grad[0]:g}, {grad[1]:g}, {grad[2]:g}. Push the true class's score
+          up, push the others down, each by exactly how much it was over-believed.
+      - id: gr-3
+        cue: descend
+        narration: >
+          Take four gradient steps on the scores and the true class's share rises to
+          {p_target_after_4:g}; the loss falls from {loss:g} to {loss_after_4:g}. This is the line
+          where backpropagation begins in every classifier: the error signal at the output is simply
+          p minus y.
+
+  - id: derm
+    title: "Softmax on a real job: six diagnoses"
+    scene: DermSM
+    beats:
+      - id: derm-1
+        cue: train
+        equations: [multi]
+        narration: >
+          Now the real job. We standardise the {derm_features} findings, give each of the six diseases
+          its own row of weights, and train by gradient descent on exactly the loss and gradient we
+          just derived. The mean cross-entropy on the training patients falls from {derm_loss_start:g},
+          which is the log of six, the loss of pure guessing, to {derm_loss_end:g}.
+      - id: derm-2
+        cue: test
+        narration: >
+          Did it work? On the {derm_test} patients the model has never seen it is right {derm_correct}
+          times, {derm_acc} percent, and the correct diagnosis is always in its top two. The original
+          authors reported about {paper_acc:g} percent with their own method in nineteen ninety-eight,
+          so a softmax regression with the right loss is already at the published standard. The
+          confusion matrix shows where the few mistakes fall, and even the rarest disease, with only
+          {derm_rare_n} patients in the whole set, is recognised.
+      - id: derm-3
+        cue: patient
+        narration: >
+          Here is one real patient from the test set, aged {ex_age}. The model gives {ex_top_pct}
+          percent to {ex_top} and {ex_second_pct} percent to {ex_second}, a close call, and the
+          confirmed diagnosis is {ex_truth}. That is the readout a clinician wants: not a single
+          label, but the probabilities, so that a near tie is visible and a second test can be ordered.
+
+  - id: scale
+    title: "At enterprise scale: a screening network and a language model"
+    scene: ScaleSM
+    beats:
+      - id: scale-1
+        cue: lung
+        equations: [risk]
+        narration: >
+          At enterprise scale the same layer sits at the end of much bigger networks. Google's
+          lung-cancer screening model, published in Nature Medicine in twenty nineteen, reads a chest
+          C.T. with a three-dimensional convolutional network and ends in a softmax over two outcomes.
+          It reached an area under the curve of {ardila_auc:g} percent on {ardila_cases:,} scans from
+          the National Lung Screening Trial, and without a prior scan it made {ardila_fp} percent fewer
+          false positives and {ardila_fn} percent fewer false negatives than six radiologists. The
+          probability from that softmax sets who is called back.
+      - id: scale-2
+        cue: vocab
+        equations: [perplexity]
+        narration: >
+          And a language model is a classifier over its vocabulary. GPT-two ends in a softmax over
+          {gpt2_vocab:,} tokens, trained by cross-entropy on the next word; e to that loss is the
+          perplexity quoted in every model report, and a temperature divides the scores before the
+          softmax to make the model more or less decisive. Same formula, fifty thousand bars.
+
+  - id: fail
+    title: "When it fails: four things to check"
+    scene: FailSM
+    beats:
+      - id: fail-1
+        cue: overconfident
+        equations: [calibration]
+        narration: >
+          Now, when it fails. First, over-confidence. Train the same model for much longer without any
+          regularisation and its average confidence creeps up to {derm_conf_over:g} percent while its
+          accuracy slips to {derm_acc_over} percent; the calibration error more than doubles, from
+          {derm_ece:g} to {derm_ece_over:g}. Large deep networks do this far more severely, which is
+          why temperature scaling, a single number dividing the scores, is fitted on held-out data
+          before a medical model is deployed.
+      - id: fail-2
+        cue: biopsy
+        narration: >
+          Second, the inputs you will not have. Train on the twelve clinical findings alone, as in a
+          clinic that cannot do a biopsy, and accuracy falls from {derm_acc} to {derm_acc_clinical}
+          percent. A model is only as good as the inputs available at the moment of the decision, so
+          check which columns will actually exist in production.
+      - id: fail-3
+        cue: noise
+        narration: >
+          Third, label noise. Flip twenty percent of the training diagnoses at random, the kind of
+          error that creeps into real records, and the test accuracy drops from {derm_acc} to
+          {derm_acc_noisy} percent. Cross-entropy trusts every label completely, so the quality of the
+          labels is the ceiling on the model.
+      - id: fail-4
+        cue: second
+        narration: >
+          Fourth, the hidden second. The top label hides how close the race was. In our small test
+          set one patient had two diseases within a few points of each other, and in a large
+          deployment that will be hundreds. Report the probabilities, flag the near ties, and let a
+          person look.
+
+  - id: recap
+    title: "The checklist"
+    scene: RecapSM
+    beats:
+      - id: recap-1
+        cue: checklist
+        narration: >
+          So here is the checklist. Two answers, sigmoid; several, softmax; thousands, still softmax.
+          Subtract the maximum before exponentiating. Train with cross-entropy, whose gradient is
+          prediction minus truth. Judge the model on patients it has never seen, with accuracy, the
+          confusion matrix and the top-two rate.
+      - id: recap-2
+        cue: fails
+        narration: >
+          Then check the four failures: calibrate the confidence on held-out data, train only on
+          inputs that will exist at decision time, audit the labels, and report the probabilities
+          rather than a single label. Do that, and you have built what a diagnostic model and a
+          language model both end with. Next: linear and logistic regression, where we trace this
+          neuron to its root.
