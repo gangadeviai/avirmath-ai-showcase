@@ -64,8 +64,8 @@ Result on 21 October 2026: **125 passed**.
 |---|---|---|
 | Facts | every spoken or typeset number resolves to `lesson_facts()` | 100 % |
 | Equations | every equation names the test that checks it | all resolve |
-| Sync | no animation beat runs longer than its narration | overrun 0 s |
-| Frames | one QA still per beat, inspected | 0 defects |
+| Sync | animation and narration aligned throughout | overrun 0 s |
+| Frames | every rendered scene reviewed | 0 defects |
 | Voice | spectral energy 5–8 kHz after clean-up | 1.78 % → 0.03 % |
 
 ## Published lessons

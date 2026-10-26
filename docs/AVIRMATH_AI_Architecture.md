@@ -8,7 +8,7 @@
 | Author | Gangadevi (founder, `@gangadeviai`) |
 | Prepared with | A frontier large language model (LLM) agent, under the founder's direction |
 | Version | 1.0, 6 October 2026 |
-| Figures | `docs/figures/fig1_system_architecture.{pdf,svg,png}`, `fig2_lesson_pipeline.*`, `fig3_single_source_of_truth.*` (vector PDF/SVG for the manuscript, 300-dpi PNG for Word and the web) |
+| Figures | `docs/figures/fig1_system_architecture.{pdf,svg,png}`, `fig3_single_source_of_truth.*`, `architecture_ieee.*` (vector PDF/SVG for the manuscript, 300-dpi PNG for Word and the web) |
 
 ---
 
@@ -35,7 +35,7 @@ The system has six layers:
 | **A  Learner interface** | Web lesson page, interactive experiment, learner profile, on-demand request | Where a learner consumes a lesson or asks for a new one (paid). |
 | **B  Orchestration** | Orchestrator (“Lesson Director”), verification gates, human approval, budget and queue | Owns job state, routes work between agents, enforces gates, bounds retries, stops for human sign-off, meters cost. |
 | **C  Specialised agents** | Profiler, Historian, Math Author, Math Verifier, Lesson Writer, Animation Director, Visual Critic, Experiment Builder | The only components that use a large language model. Each is a role with its own tool set; they exchange files, never chat. |
-| **D  Deterministic services** | Narration, sync engine, renderer, assembly, SEO/AEO/GEO pack, site generator | Reproducible transformations of the artifacts; no model is consulted. |
+| **D  Deterministic services** | Narration, renderer, assembly, SEO/AEO/GEO pack, site generator | Reproducible transformations of the artifacts; no model is consulted. |
 | **E  Shared artifact store** | `lesson.yaml`, `mathcore/<concept>.py` + tests, facts dictionary, timing records, media, project memory | Single source of truth for every lesson. |
 | **F  Published outputs** | Narrated video, captions and chapters, lesson web page, assessment, SEO/AEO/GEO pack | What learners and search engines receive. |
 
@@ -46,7 +46,7 @@ The system has six layers:
 | Model | Provider / runtime | Where it is used | Notes |
 |---|---|---|---|
 | **Frontier large language model (LLM)** | Commercial model, accessed through an agentic coding runtime (file tools, shell, browser) | Every agent role in layer C (Profiler, Historian, Math Author, Math Verifier, Lesson Writer, Animation Director, Visual Critic, Experiment Builder) and the orchestration decisions | One model, eight roles. Roles are separated by prompt, tool access and the artifact they own, not by different models. The Visual Critic uses the model's image input to inspect rendered frames. |
-| **en-GB-SoniaNeural** | Microsoft neural text-to-speech, accessed through `edge-tts` | Narration service (layer D) | Female British English voice chosen by the founder; speaking rate +10 to +12 %. Returns word-level timings used by the sync engine. |
+| **en-GB-SoniaNeural** | Microsoft neural text-to-speech, accessed through `edge-tts` | Narration service (layer D) | Female British English voice chosen by the founder; speaking rate +10 to +12 %. |
 | **Mathematical models in `mathcore`** | Deterministic Python (NumPy, SymPy) | Every number spoken, typeset or simulated | Not learned models. Each lesson ships its own small model, for example the gradient-descent landscape f(x, y) = x² + 3y², a two-layer network for backpropagation, a 20-dimensional ratings matrix for the matrices lesson, synthetic credit data for logistic regression. |
 
 No image-generation, video-generation or voice-cloning models are used. Every frame is rendered programmatically from code, which is what makes frame-level verification possible.
@@ -72,9 +72,9 @@ No image-generation, video-generation or voice-cloning models are used. Every fr
 |---|---|---|
 | Manim Community Edition | 0.21.0 | 2D and true 3D animation (`ThreeDScene` surfaces for gradient landscapes, loss surfaces, transformations). |
 | MiKTeX (LaTeX, dvisvgm) | 25.12 | Typesets every equation in the video. Must be invoked from the venv's own interpreter; running Manim through `uv run` breaks dvisvgm on Windows. |
-| edge-tts | 7.2.8 | Neural narration with word timings. |
-| FFmpeg (bundled) | imageio-ffmpeg 0.6.0 | Per-beat audio trimming and delay, loudness normalisation, muxing, captions, chapter metadata, logo overlay. |
-| PyAV | 18.1.0 | Frame extraction for QA stills and poster images. |
+| edge-tts | 7.2.8 | Neural narration. |
+| FFmpeg (bundled) | imageio-ffmpeg 0.6.0 | Video assembly, loudness normalisation, muxing, captions, chapter metadata, logo overlay. |
+| PyAV | 18.1.0 | Poster images. |
 | Pillow | 12.3.0 | Poster and branding assets. |
 | matplotlib | 3.11.2 | Publication figures in this document. |
 | Space Grotesk, Outfit, Sora (fonts) | — | Brand typography; the logo wordmark uses Space Grotesk. |
@@ -87,74 +87,37 @@ No image-generation, video-generation or voice-cloning models are used. Every fr
 | KaTeX | 0.16.9 | Typesets the same equations on the web page. |
 | Three.js | 0.160.0 | Live 3D experiments in the browser. |
 | Node.js | 24.18.0 | Front-end tooling and experiment tests. |
-| Design system | ui-ux-pro-max skill output (`design-system/avirmath-ai/MASTER.md`) | Light, Swiss-minimal tokens: Inter, Source Serif 4, Space Grotesk; primary #2563EB. |
+| Design system | Project design tokens | Light, Swiss-minimal tokens: Inter, Source Serif 4, Space Grotesk; primary #2563EB. |
 
 ### 4.4 Authoring environment
 
-| Tool | Role |
-|---|---|
-| LLM agent runtime (desktop) | File tools, shell, browser pane for visual QA, persistent project memory. |
-| `avirmathai` skill | House rules the agents follow: approval before building, history-grounded stories, mathematician-grade examples, 3D for gradients, step-by-step working, British narration, per-learner profiles. |
-| Design skills (`ui-ux-pro-max`, `design-system`, `brand`) | Design tokens and review checklists for the site and the logo. |
-| Wikipedia and primary sources | Historian's source check for people, dates and industry claims. |
+The agent roles run inside an LLM agent runtime (file tools, shell, browser for visual checks) and follow a written set of house rules covering pedagogy, visual style and production standards. The rules are part of the private pipeline. The Historian role checks people, dates and industry claims against primary sources.
 
 ---
 
 ## 5. The multi-agent system
 
-One orchestrator and eight specialised agents. Each agent is a role with a fixed input artifact, a fixed output artifact, a restricted tool set, and a gate it must pass. Agents never share a conversation; they hand each other files through the shared store (Figure 1, layer E).
+One orchestrator and eight specialised agent roles. Each role owns one artifact and must pass a gate before its work is accepted. Roles never share a conversation; they hand each other files.
 
-| # | Agent | Input | Output (artifact it owns) | Tools it may use | Gate before its output is accepted |
-|---|---|---|---|---|---|
-| 0 | **Orchestrator** (“Lesson Director”) | Learner request: topic, level, field, own question | Job record, routing decisions, retry counts, approval requests | Job state store, queue, gate results, budget meter, approval inbox. Never writes content. | — |
-| 1 | **Profiler** | Learner request, concept graph, catalogue | Learning objectives and prerequisite ladder | Concept graph, catalogue (`lessons/CATALOG.md`), learner-profile store | Objectives reference catalogue concepts only |
-| 2 | **Historian** | Objectives | Origin story, dated events, real industry use, with sources | Web search, page fetch, citation store | Every claim has a source; dates cross-checked |
-| 3 | **Math Author** | Objectives | `mathcore/<concept>.py` with a `lesson_facts()` dictionary | Python sandbox, NumPy, SymPy | Hands over to the Verifier; cannot self-approve |
-| 4 | **Math Verifier** | The Math Author's code only (never its reasoning) | `tests/test_<concept>.py`; pass/fail report | pytest, SymPy symbolic differentiation, finite-difference gradient checker | All tests pass (125 today) |
-| 5 | **Lesson Writer** | Story, facts dictionary, objectives | `lessons/<id>/lesson.yaml`: chapters, beats, narration, equations, animation cues, quiz, SEO/AEO/GEO block | Lesson schema validator, facts dictionary, `avirmathai` skill | Schema valid; every `{placeholder}` resolves to a fact; every equation names a `checked_by` test that exists; founder approves the storyboard |
-| 6 | **Animation Director** | `lesson.yaml` cues, word timings | Manim scene classes (`video/scenes/<id>.py`) | Manim, style module, scene library, snapshot renderer (`--snap`) | Every beat ends within its narrated window (no overrun) |
-| 7 | **Visual Critic** | One still per beat | Defect list or clean report | Frame sampler, image input (“watch it muted”) | No overlaps, clipping, off-palette colours, or logo-corner intrusions |
-| 8 | **Experiment Builder** | `lesson.yaml` experiment spec, mathcore | Browser simulation (Three.js) and golden data | Reference-data exporter from mathcore, test runner | Simulation reproduces mathcore numbers within tolerance |
+| # | Role | Owns |
+|---|---|---|
+| 0 | **Orchestrator** ("Lesson Director") | The job: routing, retries, approval requests. Never writes content. |
+| 1 | **Profiler** | Learning objectives and the prerequisite ladder for the learner's level and field. |
+| 2 | **Historian** | Real-world uses and sources for every claim. |
+| 3 | **Math Author** | The mathematics as runnable code, with the facts a lesson may quote. |
+| 4 | **Math Verifier** | The tests that try to break that code (125 today). |
+| 5 | **Lesson Writer** | `lessons/<id>/lesson.yaml`: chapters, narration, equations, quiz, SEO/AEO/GEO block. |
+| 6 | **Animation Director** | The animated scenes for each chapter. |
+| 7 | **Visual Critic** | The frame-by-frame review of the rendered scenes. |
+| 8 | **Experiment Builder** | The interactive experiment, checked against the same mathematics. |
 
-**Independence is the point.** The Verifier and the Critic catch errors precisely because they did not produce the work they check. Least privilege applies: only the Historian reaches the web, only the mathematics agents execute code, and only the orchestrator can publish.
+**Independence is the point.** The Verifier and the Critic catch errors precisely because they did not produce the work they check.
 
 ---
 
 ## 6. Orchestration structure
 
-![Figure 2. Lesson production pipeline](figures/fig2_lesson_pipeline.png)
-
-*Figure 2. The nine-stage pipeline as run for the six foundation lessons. Blue stages are agent work, orange are verification and control, green are deterministic services. Dashed red arrows are bounded feedback loops. H marks the single human checkpoint.*
-
-### 6.1 Job state machine
-
-A lesson job moves through nine states. The orchestrator advances a job only when the stage's gate reports success.
-
-| Stage | Who | Gate | On failure |
-|---|---|---|---|
-| 1 Research | Historian | Sources present and consistent | Re-research, max 3 attempts |
-| 2 Mathematics | Math Author | — (hands to 3) | — |
-| 3 Verification | Math Verifier | `pytest` all green | Exact failing assertion returned to the Math Author; max 3 attempts |
-| 4 Composition | Lesson Writer | Schema valid, facts resolved, `checked_by` tests exist | Validator message returned to the Writer |
-| **H** Storyboard approval | Founder | Approved | Writer revises; job waits |
-| 5 Narration | Service | Audio and `timings.json` produced for every chapter | Service error → stop |
-| 6 Animation | Animation Director | Each beat's `actual/<Scene>.json` within its narrated window | Overrun report returned to the Director |
-| 7 Visual QA | Visual Critic | No defects in any beat still | Defect list returned to the Director; re-snapshot |
-| 8 Render and assemble | Service | Output file exists, duration matches narration | Service error → stop |
-| 9 Publish | Service | Site builds, page has video, captions, poster | Service error → stop |
-
-### 6.2 Control rules
-
-1. **Order and parallelism.** The Historian and the Math Author run concurrently; the Lesson Writer waits for both. The Experiment Builder runs in parallel with the Animation Director once the storyboard is approved.
-2. **Hard gates.** No agent can overrule a gate. The gates are deterministic programs, so a passing lesson is reproducible.
-3. **Bounded feedback loops.** A failed gate returns the exact error to the responsible agent. After three failures the job stops and is flagged for a person. This bounds cost and prevents endless self-correction.
-4. **Shared artifacts, not chat.** Agents communicate through `lesson.yaml`, the mathematics module, the facts dictionary and the timing records. This is what keeps story, simulation and video consistent, and it makes every hand-off inspectable.
-5. **One human checkpoint.** The storyboard stops for the founder's sign-off before the expensive animation and render stages. Six lessons were approved this way; the first pilot was rejected once (story and theming) and re-planned before any animation was rendered.
-6. **Budget and reuse.** Each job has a token and render-minute budget. A verified mathematics module is reused across learners: the same mathematics can be given a different story, example and depth, which is what makes personalisation affordable.
-
-### 6.3 Timing contract between narration and animation
-
-The sync engine gives every beat a spoken window. Narration is synthesised per chapter, word timings recover the beat boundaries, and each Manim scene declares `with self.beat(id)` blocks that may `wait_for("phrase")` on a cue word. At assembly, audio is sliced per beat (`atrim` + `adelay`), so a small animation overrun is absorbed rather than drifting through the rest of the video. The build records the actual start of every beat so the Visual Critic and the overrun gate check real frames, not estimates.
+A rule-based orchestrator moves every lesson through fixed verification gates: the mathematics tests must pass, the lesson file must validate with every placeholder resolved and every equation's test present, the founder must approve the storyboard, the animation must fit its narration, and every frame must pass visual review. A failed gate returns the exact error to the responsible role; after three failures the job stops for a person. The gates are deterministic programs, so a passing lesson is reproducible. The detailed job state machine, control rules and the timing contract between narration and animation are documented in the private repository.
 
 ---
 
@@ -187,8 +150,8 @@ The loader validates the schema, fills every placeholder from the facts dictiona
 |---|---|
 | Mathematics modules and tests | **Implemented.** Seven modules, 125 passing tests. |
 | Lesson schema, loader, facts binding, `checked_by` check | **Implemented.** |
-| Narration, sync engine, snapshot QA, renderer, assembly, branding overlay, captions, chapters, SEO pack | **Implemented** (`src/avirmath/video/`). |
-| Static site generator and six lesson pages | **Implemented** (`web/build_site.py` → `web/site/`). |
+| Video production pipeline: narration, animation, rendering, captions, chapters, SEO pack | **Implemented** (private repository). |
+| Static site generator and six lesson pages | **Implemented** (private repository; the generated site is public). |
 | Eight agent roles and the gates | **Implemented as roles executed by the LLM agent inside its runtime**, under the founder's direction, one lesson at a time. The gates are real programs and were enforced for every lesson. |
 | Orchestrator as an autonomous service (job store, queue, budget meter, approval inbox) | **Target.** Today the founder and the LLM agent session play this role by hand. Required for the paid on-demand feature. |
 | Interactive experiments on the generated pages | **Partially implemented.** Three.js experiment exists in the design preview; wiring into every generated lesson page is pending. |
@@ -196,63 +159,50 @@ The loader validates the schema, fills every placeholder from the facts dictiona
 
 ### Published lessons
 
-| # | Lesson | Mathematics module | Output |
-|---|---|---|---|
-| 1 | Gradient descent (Cauchy, 1847 → Stanford, 1960 → today) | `gradient_descent.py`, `adaptive_filter.py` | `output/gradient-descent/v2-female-voice-logo/` |
-| 2 | Backpropagation | `backprop.py` | `output/backpropagation/v1/` |
-| 3 | Vectors and the dot product | `vectors.py` | `output/vectors-dot-product/v1/` |
-| 4 | Matrices as transformations | `matrices.py` | `output/matrices-transformations/v1/` |
-| 5 | Softmax and cross-entropy | `softmax.py` | `output/softmax-cross-entropy/v1/` |
-| 6 | Linear and logistic regression | `regression.py` | `output/linear-logistic-regression/v1/` |
+| # | Lesson | Mathematics module |
+|---|---|---|
+| 1 | Gradient descent (Cauchy, 1847 → Stanford, 1960 → today) | `gradient_descent.py`, `adaptive_filter.py` |
+| 2 | Backpropagation | `backprop.py` |
+| 3 | Vectors and the dot product | `vectors.py` |
+| 4 | Matrices as transformations | `matrices.py` |
+| 5 | Softmax and cross-entropy | `softmax.py` |
+| 6 | Linear and logistic regression | `regression.py` |
 
-Each output folder contains the 720p24 video, SRT and VTT captions, a chapter file and the SEO/AEO/GEO pack.
+Each lesson ships as a 720p video with SRT and VTT captions, a chapter file and an SEO/AEO/GEO pack (captions and packs are in `results/`).
 
 ---
 
 ## 9. Repository layout
 
+This public repository:
+
 ```
-Avirmath AI/
-├─ skills/avirmathai/              house rules, pedagogy and Manim references, scene template
-├─ ARCHITECTURE.md                 short agent design note (superseded by this document)
-├─ PLAN.md                         product plan and phases
-├─ branding.yaml                   logo and handle placement rules
-├─ design-system/avirmath-ai/      design tokens from the ui-ux-pro-max skill
-├─ docs/
-│  ├─ AVIRMATH_AI_Architecture.md  this document
-│  └─ figures/                     make_figures.py and fig1–fig3 (pdf, svg, png)
-├─ lessons/<id>/lesson.yaml        one lesson file per concept; CATALOG.md lists 21 planned topics
-├─ src/avirmath/
-│  ├─ mathcore/                    tested mathematics, one module per concept
-│  ├─ lesson/                      schema.json and loader (validation, facts binding)
-│  └─ video/                       narrate, build, branding, seo, style, scenes/<id>.py
+avirmath-ai-showcase/
+├─ README.md, RESULTS.md, DECISIONS.md, DATASETS.md
+├─ LICENSE (Apache-2.0, code) · LICENSE-CONTENT.md (CC BY-NC 4.0, lessons)
+├─ docs/                           this document, the plain-language explainer, figures
+├─ lessons/<id>/lesson.yaml        one lesson file per concept; CATALOG.md lists the 21 topics
+├─ src/avirmath/mathcore/          tested mathematics, one module per concept, lesson_facts()
+├─ src/avirmath/lesson/            schema.json and loader (validation, facts binding, checked_by)
 ├─ tests/                          125 pytest tests
-├─ web/build_site.py → web/site/   static site (home + lessons + media)
-└─ output/<id>/<version>/          published videos and packs
+├─ data/                           the three UCI datasets modelled on screen
+├─ results/<id>/                   captions, chapters, descriptions and AI summaries per lesson
+└─ thumbnails/                     published video thumbnails
 ```
 
-Project source (Python, HTML, JavaScript, excluding generated site) is about 7,000 lines.
+The production pipeline (narration, animation, rendering, site generation) lives in a private repository.
 
 ---
 
 ## 10. Reproducibility
 
-All commands run from the project root with the project's own interpreter.
+From this repository:
 
 ```bash
-.venv\Scripts\python.exe -m pytest -q
+python -m venv .venv
+.venv/Scripts/pip install -e ".[test]"
+python -m pytest -q
 ```
 
-```bash
-.venv\Scripts\python.exe -m avirmath.video.build gradient-descent --quality sample --snap
-```
+Every number quoted in a lesson can be regenerated with `lesson_facts()` from the corresponding module, and every lesson file can be validated with `avirmath.lesson.loader.load_lesson`. The figures are generated from code, so they can be revised for a journal's style requirements (size, font, greyscale) without redrawing.
 
-```bash
-.venv\Scripts\python.exe web\build_site.py
-```
-
-```bash
-.venv\Scripts\python.exe docs\figures\make_figures.py
-```
-
-The figures are regenerated from code, so they can be revised for a journal's style requirements (size, font, greyscale) without redrawing.
