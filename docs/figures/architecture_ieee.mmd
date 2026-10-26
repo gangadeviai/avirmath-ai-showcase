@@ -29,7 +29,7 @@ flowchart TD
 
     subgraph L4["Layer 4 - Governance and Execution Loop"]
         direction LR
-        G1["Tool Integration<br/>pytest and SymPy checks<br/>schema validator<br/>snapshot renderer (one still per beat)<br/>browser-based page checks"]
+        G1["Tool Integration<br/>pytest and SymPy checks<br/>schema validator<br/>frame review of every rendered scene<br/>browser-based page checks"]
         G2["Verification Gates and Feedback<br/>failed gate returns the exact error<br/>to the responsible agent<br/>strategy recalibration, then retry"]
         G3["Real-time Evaluation Metrics<br/>125 math tests passing<br/>beat overrun = 0 s<br/>frame defects = 0<br/>facts coverage = 100%"]
         G1 <--> G2
@@ -39,7 +39,7 @@ flowchart TD
     subgraph L5["Layer 5 - Downstream Output and Safety"]
         direction LR
         D1["Safety and Guardrail Boundaries<br/>numbers only from the facts dictionary<br/>history only with sources<br/>fixed branding and voice rules"]
-        D2["Observability and Human-in-the-Loop<br/>storyboard approval by the founder<br/>run trace and QA stills<br/>stop after 3 failed retries"]
+        D2["Observability and Human-in-the-Loop<br/>storyboard approval by the founder<br/>run trace and review record<br/>stop after 3 failed retries"]
         D3["Downstream Delivery<br/>narrated video, captions, chapters<br/>lesson web page with assessment<br/>interactive experiment, SEO/AEO/GEO pack<br/>static site deployment"]
         D1 --> D2 --> D3
     end
