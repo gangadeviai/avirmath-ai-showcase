@@ -22,7 +22,7 @@ flowchart TD
     subgraph L3["Layer 3 - Core Models and Compute"]
         direction LR
         M1["Language Model<br/>frontier LLM via an agent runtime<br/>one model, all eight roles<br/>image input for frame review"]
-        M2["Speech Model<br/>Microsoft neural TTS, en-GB Sonia<br/>via edge-tts, word-level timings"]
+        M2["Speech Model<br/>Microsoft neural TTS, en-GB Sonia<br/>via edge-tts"]
         M3["Deterministic Renderers and Compute<br/>Manim CE 0.21 + LaTeX frames<br/>FFmpeg assembly, Python 3.13 site generator<br/>local workstation, batched rendering"]
         M1 --- M2 --- M3
     end
@@ -31,7 +31,7 @@ flowchart TD
         direction LR
         G1["Tool Integration<br/>pytest and SymPy checks<br/>schema validator<br/>frame review of every rendered scene<br/>browser-based page checks"]
         G2["Verification Gates and Feedback<br/>failed gate returns the exact error<br/>to the responsible agent<br/>strategy recalibration, then retry"]
-        G3["Real-time Evaluation Metrics<br/>125 math tests passing<br/>beat overrun = 0 s<br/>frame defects = 0<br/>facts coverage = 100%"]
+        G3["Real-time Evaluation Metrics<br/>125 math tests passing<br/>timing overrun = 0 s<br/>frame defects = 0<br/>facts coverage = 100%"]
         G1 <--> G2
         G2 <--> G3
     end
